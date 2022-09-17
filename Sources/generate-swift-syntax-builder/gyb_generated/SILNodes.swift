@@ -1,4 +1,4 @@
-//// Automatically Generated From SyntaxBaseKinds.swift.gyb.
+//// Automatically Generated From SILNodes.swift.gyb.
 //// Do Not Edit Directly!
 //===----------------------------------------------------------------------===//
 //
@@ -12,13 +12,18 @@
 //
 //===----------------------------------------------------------------------===//
 
-let SYNTAX_BASE_KINDS: Set<String> = [
-  "Decl",
-  "Expr",
-  "Pattern",
-  "Stmt",
-  "Syntax",
-  "SyntaxCollection",
-  "Type",
-  "SIL",
+let SIL_NODES: [Node] = [
+  Node(name: "SILStage",
+       nameForDiagnostics: "SIL stage",
+       kind: "SIL",
+       children: [
+         Child(name: "StageToken",
+               kind: "Token"),
+         Child(name: "StageName",
+               kind: "IdentifierToken",
+               tokenChoices: [
+                 "Identifier"
+               ])
+       ]),
+
 ]

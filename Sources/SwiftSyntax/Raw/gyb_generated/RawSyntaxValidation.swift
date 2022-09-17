@@ -41,6 +41,8 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
     break
   case .unknownPattern:
     break
+  case .unknownSIL:
+    break
   case .missing:
     assert(layout.count == 0)
     break
@@ -61,6 +63,9 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
     assert(layout.count == 0)
     break
   case .missingPattern:
+    assert(layout.count == 0)
+    break
+  case .missingSIL:
     assert(layout.count == 0)
     break
   case .codeBlockItem:
@@ -2319,6 +2324,13 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
     _verify(layout[3], as: RawTokenSyntax?.self)
     _verify(layout[4], as: RawUnexpectedNodesSyntax?.self)
     _verify(layout[5], as: RawTokenSyntax?.self)
+    break
+  case .silStage:
+    assert(layout.count == 4)
+    _verify(layout[0], as: RawUnexpectedNodesSyntax?.self)
+    _verify(layout[1], as: RawTokenSyntax.self)
+    _verify(layout[2], as: RawUnexpectedNodesSyntax?.self)
+    _verify(layout[3], as: RawTokenSyntax.self)
     break
   }
 #endif

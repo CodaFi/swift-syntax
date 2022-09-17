@@ -507,3 +507,102 @@ extension PatternSyntax: CustomReflectable {
   }
 }
 
+// MARK: - SILSyntax
+
+/// Protocol to which all `SILSyntax` nodes conform. Extension point to add
+/// common methods to all `SILSyntax` nodes.
+/// DO NOT CONFORM TO THIS PROTOCOL YOURSELF!
+public protocol SILSyntaxProtocol: SyntaxProtocol {}
+
+public extension Syntax {
+  /// Check whether the non-type erased version of this syntax node conforms to 
+  /// SILSyntaxProtocol. 
+  /// Note that this will incur an existential conversion.
+  func isProtocol(_: SILSyntaxProtocol.Protocol) -> Bool {
+    return self.asProtocol(SILSyntaxProtocol.self) != nil
+  }
+
+  /// Return the non-type erased version of this syntax node if it conforms to 
+  /// SILSyntaxProtocol. Otherwise return nil.
+  /// Note that this will incur an existential conversion.
+  func asProtocol(_: SILSyntaxProtocol.Protocol) -> SILSyntaxProtocol? {
+    return self.asProtocol(SyntaxProtocol.self) as? SILSyntaxProtocol
+  }
+}
+
+public struct SILSyntax: SILSyntaxProtocol, SyntaxHashable {
+  public let _syntaxNode: Syntax
+
+  /// Create a `SILSyntax` node from a specialized syntax node.
+  public init<S: SILSyntaxProtocol>(_ syntax: S) {
+    // We know this cast is going to succeed. Go through init(_: SyntaxData)
+    // to do a sanity check and verify the kind matches in debug builds and get
+    // maximum performance in release builds.
+    self.init(syntax._syntaxNode.data)
+  }
+
+  /// Create a `SILSyntax` node from a specialized optional syntax node.
+  public init?<S: SILSyntaxProtocol>(_ syntax: S?) {
+    guard let syntax = syntax else { return nil }
+    self.init(syntax)
+  }
+
+  /// Converts the given `Syntax` node to a `SILSyntax` if possible. Returns
+  /// `nil` if the conversion is not possible.
+  public init?(_ syntax: Syntax) {
+    switch syntax.raw.kind {
+    case .unknownSIL, .missingSIL, .silStage:
+      self._syntaxNode = syntax
+    default:
+      return nil
+    }
+  }
+
+  /// Creates a `SILSyntax` node from the given `SyntaxData`. This assumes
+  /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
+  /// is undefined.
+  internal init(_ data: SyntaxData) {
+    // Assert that the kind of the given data matches in debug builds.
+#if DEBUG
+    switch data.raw.kind {
+    case .unknownSIL, .missingSIL, .silStage:
+      break
+    default:
+      fatalError("Unable to create SILSyntax from \(data.raw.kind)")
+    }
+#endif
+
+    self._syntaxNode = Syntax(data)
+  }
+
+  public func `is`<S: SILSyntaxProtocol>(_ syntaxType: S.Type) -> Bool {
+    return self.as(syntaxType) != nil
+  }
+
+  public func `as`<S: SILSyntaxProtocol>(_ syntaxType: S.Type) -> S? {
+    return S.init(_syntaxNode)
+  }
+
+  /// Syntax nodes always conform to `SILSyntaxProtocol`. This API is just
+  /// added for consistency.
+  /// Note that this will incur an existential conversion.
+  @available(*, deprecated, message: "Expression always evaluates to true")
+  public func isProtocol(_: SILSyntaxProtocol.Protocol) -> Bool {
+    return true
+  }
+
+  /// Return the non-type erased version of this syntax node.
+  /// Note that this will incur an existential conversion.
+  public func asProtocol(_: SILSyntaxProtocol.Protocol) -> SILSyntaxProtocol {
+    return Syntax(self).asProtocol(SILSyntaxProtocol.self)!
+  }
+}
+
+extension SILSyntax: CustomReflectable {
+  /// Reconstructs the real syntax type for this type from the node's kind and
+  /// provides a mirror that reflects this type.
+  public var customMirror: Mirror {
+    return Mirror(reflecting: Syntax(self).asProtocol(SyntaxProtocol.self))
+  }
+}
+

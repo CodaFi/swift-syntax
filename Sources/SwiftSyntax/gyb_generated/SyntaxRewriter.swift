@@ -58,6 +58,13 @@ open class SyntaxRewriter {
     return PatternSyntax(visitChildren(node))
   }
 
+  /// Visit a `UnknownSILSyntax`.
+  ///   - Parameter node: the node that is being visited
+  ///   - Returns: the rewritten node
+  open func visit(_ node: UnknownSILSyntax) -> SILSyntax {
+    return SILSyntax(visitChildren(node))
+  }
+
   /// Visit a `MissingSyntax`.
   ///   - Parameter node: the node that is being visited
   ///   - Returns: the rewritten node
@@ -98,6 +105,13 @@ open class SyntaxRewriter {
   ///   - Returns: the rewritten node
   open func visit(_ node: MissingPatternSyntax) -> PatternSyntax {
     return PatternSyntax(visitChildren(node))
+  }
+
+  /// Visit a `MissingSILSyntax`.
+  ///   - Parameter node: the node that is being visited
+  ///   - Returns: the rewritten node
+  open func visit(_ node: MissingSILSyntax) -> SILSyntax {
+    return SILSyntax(visitChildren(node))
   }
 
   /// Visit a `CodeBlockItemSyntax`.
@@ -1913,6 +1927,13 @@ open class SyntaxRewriter {
     return Syntax(visitChildren(node))
   }
 
+  /// Visit a `SILStageSyntax`.
+  ///   - Parameter node: the node that is being visited
+  ///   - Returns: the rewritten node
+  open func visit(_ node: SILStageSyntax) -> SILSyntax {
+    return SILSyntax(visitChildren(node))
+  }
+
 
   /// Visit a `TokenSyntax`.
   ///   - Parameter node: the node that is being visited
@@ -2005,6 +2026,16 @@ open class SyntaxRewriter {
   }
 
   /// Implementation detail of visit(_:). Do not call directly.
+  private func visitImplSILSyntax(_ data: SyntaxData) -> Syntax {
+      let node = UnknownSILSyntax(data)
+      // Accessing _syntaxNode directly is faster than calling Syntax(node)
+      visitPre(node._syntaxNode)
+      defer { visitPost(node._syntaxNode) }
+      if let newNode = visitAny(node._syntaxNode) { return newNode }
+      return Syntax(visit(node))
+  }
+
+  /// Implementation detail of visit(_:). Do not call directly.
   private func visitImplUnknownDeclSyntax(_ data: SyntaxData) -> Syntax {
       let node = UnknownDeclSyntax(data)
       // Accessing _syntaxNode directly is faster than calling Syntax(node)
@@ -2047,6 +2078,16 @@ open class SyntaxRewriter {
   /// Implementation detail of visit(_:). Do not call directly.
   private func visitImplUnknownPatternSyntax(_ data: SyntaxData) -> Syntax {
       let node = UnknownPatternSyntax(data)
+      // Accessing _syntaxNode directly is faster than calling Syntax(node)
+      visitPre(node._syntaxNode)
+      defer { visitPost(node._syntaxNode) }
+      if let newNode = visitAny(node._syntaxNode) { return newNode }
+      return Syntax(visit(node))
+  }
+
+  /// Implementation detail of visit(_:). Do not call directly.
+  private func visitImplUnknownSILSyntax(_ data: SyntaxData) -> Syntax {
+      let node = UnknownSILSyntax(data)
       // Accessing _syntaxNode directly is faster than calling Syntax(node)
       visitPre(node._syntaxNode)
       defer { visitPost(node._syntaxNode) }
@@ -2107,6 +2148,16 @@ open class SyntaxRewriter {
   /// Implementation detail of visit(_:). Do not call directly.
   private func visitImplMissingPatternSyntax(_ data: SyntaxData) -> Syntax {
       let node = MissingPatternSyntax(data)
+      // Accessing _syntaxNode directly is faster than calling Syntax(node)
+      visitPre(node._syntaxNode)
+      defer { visitPost(node._syntaxNode) }
+      if let newNode = visitAny(node._syntaxNode) { return newNode }
+      return Syntax(visit(node))
+  }
+
+  /// Implementation detail of visit(_:). Do not call directly.
+  private func visitImplMissingSILSyntax(_ data: SyntaxData) -> Syntax {
+      let node = MissingSILSyntax(data)
       // Accessing _syntaxNode directly is faster than calling Syntax(node)
       visitPre(node._syntaxNode)
       defer { visitPost(node._syntaxNode) }
@@ -4704,6 +4755,16 @@ open class SyntaxRewriter {
       return visit(node)
   }
 
+  /// Implementation detail of visit(_:). Do not call directly.
+  private func visitImplSILStageSyntax(_ data: SyntaxData) -> Syntax {
+      let node = SILStageSyntax(data)
+      // Accessing _syntaxNode directly is faster than calling Syntax(node)
+      visitPre(node._syntaxNode)
+      defer { visitPost(node._syntaxNode) }
+      if let newNode = visitAny(node._syntaxNode) { return newNode }
+      return Syntax(visit(node))
+  }
+
 
   /// Implementation detail of visit(_:). Do not call directly.
   private func visitImplTokenSyntax(_ data: SyntaxData) -> Syntax {
@@ -4766,6 +4827,8 @@ open class SyntaxRewriter {
       return visitImplUnknownTypeSyntax
     case .unknownPattern:
       return visitImplUnknownPatternSyntax
+    case .unknownSIL:
+      return visitImplUnknownSILSyntax
     case .missing:
       return visitImplMissingSyntax
     case .missingDecl:
@@ -4778,6 +4841,8 @@ open class SyntaxRewriter {
       return visitImplMissingTypeSyntax
     case .missingPattern:
       return visitImplMissingPatternSyntax
+    case .missingSIL:
+      return visitImplMissingSILSyntax
     case .codeBlockItem:
       return visitImplCodeBlockItemSyntax
     case .codeBlockItemList:
@@ -5296,6 +5361,8 @@ open class SyntaxRewriter {
       return visitImplAvailabilityVersionRestrictionSyntax
     case .versionTuple:
       return visitImplVersionTupleSyntax
+    case .silStage:
+      return visitImplSILStageSyntax
     }
   }
 
@@ -5321,6 +5388,8 @@ open class SyntaxRewriter {
       return visitImplUnknownTypeSyntax(data)
     case .unknownPattern:
       return visitImplUnknownPatternSyntax(data)
+    case .unknownSIL:
+      return visitImplUnknownSILSyntax(data)
     case .missing:
       return visitImplMissingSyntax(data)
     case .missingDecl:
@@ -5333,6 +5402,8 @@ open class SyntaxRewriter {
       return visitImplMissingTypeSyntax(data)
     case .missingPattern:
       return visitImplMissingPatternSyntax(data)
+    case .missingSIL:
+      return visitImplMissingSILSyntax(data)
     case .codeBlockItem:
       return visitImplCodeBlockItemSyntax(data)
     case .codeBlockItemList:
@@ -5851,6 +5922,8 @@ open class SyntaxRewriter {
       return visitImplAvailabilityVersionRestrictionSyntax(data)
     case .versionTuple:
       return visitImplVersionTupleSyntax(data)
+    case .silStage:
+      return visitImplSILStageSyntax(data)
     }
   }
 

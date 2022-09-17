@@ -14,6 +14,7 @@ from .NodeSerializationCodes import SYNTAX_NODE_SERIALIZATION_CODES, \
     get_serialization_code, \
     verify_syntax_node_serialization_codes
 from .PatternNodes import PATTERN_NODES  # noqa: I201
+from .SILNodes import SIL_NODES  # noqa: I201
 from .StmtNodes import STMT_NODES  # noqa: I201
 from .Trivia import TRIVIAS  # noqa: I201
 from .TypeNodes import TYPE_NODES  # noqa: I201
@@ -23,7 +24,7 @@ from .kinds import SYNTAX_BASE_KINDS  # noqa: I201
 # Re-export global constants
 SYNTAX_NODES = COMMON_NODES + EXPR_NODES + DECL_NODES + ATTRIBUTE_NODES + \
     STMT_NODES + GENERIC_NODES + TYPE_NODES + PATTERN_NODES + \
-    AVAILABILITY_NODES
+    AVAILABILITY_NODES + SIL_NODES
 NON_BASE_SYNTAX_NODES = [node for node in SYNTAX_NODES if not node.is_base()]
 SYNTAX_TOKENS = Token.SYNTAX_TOKENS
 SYNTAX_TOKEN_MAP = Token.SYNTAX_TOKEN_MAP

@@ -40,6 +40,10 @@ public protocol SyntaxTransformVisitor {
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
   func visit(_ node: UnknownPatternSyntax) -> ResultType
+  /// Visiting `UnknownSILSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: the sum of whatever the child visitors return.
+  func visit(_ node: UnknownSILSyntax) -> ResultType
   /// Visiting `MissingSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
@@ -64,6 +68,10 @@ public protocol SyntaxTransformVisitor {
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
   func visit(_ node: MissingPatternSyntax) -> ResultType
+  /// Visiting `MissingSILSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: the sum of whatever the child visitors return.
+  func visit(_ node: MissingSILSyntax) -> ResultType
   /// Visiting `CodeBlockItemSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
@@ -1100,6 +1108,10 @@ public protocol SyntaxTransformVisitor {
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
   func visit(_ node: VersionTupleSyntax) -> ResultType
+  /// Visiting `SILStageSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: the sum of whatever the child visitors return.
+  func visit(_ node: SILStageSyntax) -> ResultType
 }
 
 extension SyntaxTransformVisitor {
@@ -1141,6 +1153,12 @@ extension SyntaxTransformVisitor {
   public func visit(_ node: UnknownPatternSyntax) -> ResultType {
     visitAny(Syntax(node))
   }
+  /// Visiting `UnknownSILSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: nil by default.
+  public func visit(_ node: UnknownSILSyntax) -> ResultType {
+    visitAny(Syntax(node))
+  }
   /// Visiting `MissingSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: nil by default.
@@ -1175,6 +1193,12 @@ extension SyntaxTransformVisitor {
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: nil by default.
   public func visit(_ node: MissingPatternSyntax) -> ResultType {
+    visitAny(Syntax(node))
+  }
+  /// Visiting `MissingSILSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: nil by default.
+  public func visit(_ node: MissingSILSyntax) -> ResultType {
     visitAny(Syntax(node))
   }
   /// Visiting `CodeBlockItemSyntax` specifically.
@@ -2731,6 +2755,12 @@ extension SyntaxTransformVisitor {
   public func visit(_ node: VersionTupleSyntax) -> ResultType {
     visitAny(Syntax(node))
   }
+  /// Visiting `SILStageSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: nil by default.
+  public func visit(_ node: SILStageSyntax) -> ResultType {
+    visitAny(Syntax(node))
+  }
 
   public func visit(_ node: Syntax) -> ResultType {
     switch node.as(SyntaxEnum.self) {
@@ -2748,6 +2778,8 @@ extension SyntaxTransformVisitor {
       return visit(derived)
     case .unknownPattern(let derived):
       return visit(derived)
+    case .unknownSIL(let derived):
+      return visit(derived)
     case .missing(let derived):
       return visit(derived)
     case .missingDecl(let derived):
@@ -2759,6 +2791,8 @@ extension SyntaxTransformVisitor {
     case .missingType(let derived):
       return visit(derived)
     case .missingPattern(let derived):
+      return visit(derived)
+    case .missingSIL(let derived):
       return visit(derived)
     case .codeBlockItem(let derived):
       return visit(derived)
@@ -3277,6 +3311,8 @@ extension SyntaxTransformVisitor {
     case .availabilityVersionRestriction(let derived):
       return visit(derived)
     case .versionTuple(let derived):
+      return visit(derived)
+    case .silStage(let derived):
       return visit(derived)
     }
   }

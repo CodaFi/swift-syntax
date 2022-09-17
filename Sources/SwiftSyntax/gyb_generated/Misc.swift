@@ -39,6 +39,8 @@ extension Syntax {
       return node
     case .unknownPattern(let node):
       return node
+    case .unknownSIL(let node):
+      return node
     case .missing(let node):
       return node
     case .missingDecl(let node):
@@ -50,6 +52,8 @@ extension Syntax {
     case .missingType(let node):
       return node
     case .missingPattern(let node):
+      return node
+    case .missingSIL(let node):
       return node
     case .codeBlockItem(let node):
       return node
@@ -569,6 +573,8 @@ extension Syntax {
       return node
     case .versionTuple(let node):
       return node
+    case .silStage(let node):
+      return node
     }
   }
 }
@@ -583,12 +589,14 @@ extension SyntaxKind {
     case .unknownStmt: return UnknownStmtSyntax.self
     case .unknownType: return UnknownTypeSyntax.self
     case .unknownPattern: return UnknownPatternSyntax.self
+    case .unknownSIL: return UnknownSILSyntax.self
     case .missing: return MissingSyntax.self
     case .missingDecl: return MissingDeclSyntax.self
     case .missingExpr: return MissingExprSyntax.self
     case .missingStmt: return MissingStmtSyntax.self
     case .missingType: return MissingTypeSyntax.self
     case .missingPattern: return MissingPatternSyntax.self
+    case .missingSIL: return MissingSILSyntax.self
     case .codeBlockItem: return CodeBlockItemSyntax.self
     case .codeBlockItemList: return CodeBlockItemListSyntax.self
     case .codeBlock: return CodeBlockSyntax.self
@@ -848,6 +856,7 @@ extension SyntaxKind {
     case .availabilityLabeledArgument: return AvailabilityLabeledArgumentSyntax.self
     case .availabilityVersionRestriction: return AvailabilityVersionRestrictionSyntax.self
     case .versionTuple: return VersionTupleSyntax.self
+    case .silStage: return SILStageSyntax.self
     }
   }
 }

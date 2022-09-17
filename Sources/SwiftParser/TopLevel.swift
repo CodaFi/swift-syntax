@@ -149,6 +149,8 @@ extension Parser {
       return RawSyntax(self.parseExpression())
     } else if self.atStartOfDeclaration(isAtTopLevel: isAtTopLevel, allowRecovery: true) {
       return RawSyntax(self.parseDeclaration())
+    } else if isAtTopLevel, let declaration = self.atStartOfSILDeclaration() {
+      return RawSyntax(self.parseSILDeclaration(declaration))
     } else {
       return RawSyntax(RawMissingExprSyntax(arena: self.arena))
     }

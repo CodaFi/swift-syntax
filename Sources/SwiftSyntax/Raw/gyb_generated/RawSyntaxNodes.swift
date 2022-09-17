@@ -22,6 +22,8 @@ public protocol RawStmtSyntaxNodeProtocol: RawSyntaxNodeProtocol {}
 public protocol RawTypeSyntaxNodeProtocol: RawSyntaxNodeProtocol {}
 @_spi(RawSyntax)
 public protocol RawPatternSyntaxNodeProtocol: RawSyntaxNodeProtocol {}
+@_spi(RawSyntax)
+public protocol RawSILSyntaxNodeProtocol: RawSyntaxNodeProtocol {}
 
 
 @_spi(RawSyntax)
@@ -170,6 +172,35 @@ public struct RawPatternSyntax: RawPatternSyntaxNodeProtocol {
 }
 
 @_spi(RawSyntax)
+public struct RawSILSyntax: RawSILSyntaxNodeProtocol {
+  var layoutView: RawSyntaxLayoutView {
+    return raw.layoutView!
+  }
+
+  public static func isKindOf(_ raw: RawSyntax) -> Bool {
+    switch raw.kind {
+    case .unknownSIL, .missingSIL, .silStage: return true
+    default: return false
+    }
+  }
+
+  public var raw: RawSyntax
+  init(raw: RawSyntax) {
+    assert(Self.isKindOf(raw))
+    self.raw = raw
+  }
+
+  public init?<Node: RawSyntaxNodeProtocol>(_ other: Node) {
+    guard Self.isKindOf(other.raw) else { return nil }
+    self.init(raw: other.raw)
+  }
+
+  public init<Node: RawSILSyntaxNodeProtocol>(_ other: Node) {
+    self.init(raw: other.raw)
+  }
+}
+
+@_spi(RawSyntax)
 public struct RawUnknownDeclSyntax: RawDeclSyntaxNodeProtocol {
   var layoutView: RawSyntaxLayoutView {
     return raw.layoutView!
@@ -269,6 +300,29 @@ public struct RawUnknownPatternSyntax: RawPatternSyntaxNodeProtocol {
 
   public static func isKindOf(_ raw: RawSyntax) -> Bool {
     return raw.kind == .unknownPattern
+  }
+
+  public var raw: RawSyntax
+  init(raw: RawSyntax) {
+    assert(Self.isKindOf(raw))
+    self.raw = raw
+  }
+
+  public init?<Node: RawSyntaxNodeProtocol>(_ other: Node) {
+    guard Self.isKindOf(other.raw) else { return nil }
+    self.init(raw: other.raw)
+  }
+
+}
+
+@_spi(RawSyntax)
+public struct RawUnknownSILSyntax: RawSILSyntaxNodeProtocol {
+  var layoutView: RawSyntaxLayoutView {
+    return raw.layoutView!
+  }
+
+  public static func isKindOf(_ raw: RawSyntax) -> Bool {
+    return raw.kind == .unknownSIL
   }
 
   public var raw: RawSyntax
@@ -482,6 +536,36 @@ public struct RawMissingPatternSyntax: RawPatternSyntaxNodeProtocol {
     arena: __shared SyntaxArena
   ) {
     let raw = RawSyntax.makeEmptyLayout(kind: .missingPattern, arena: arena)
+    self.init(raw: raw)
+  }
+
+}
+
+@_spi(RawSyntax)
+public struct RawMissingSILSyntax: RawSILSyntaxNodeProtocol {
+  var layoutView: RawSyntaxLayoutView {
+    return raw.layoutView!
+  }
+
+  public static func isKindOf(_ raw: RawSyntax) -> Bool {
+    return raw.kind == .missingSIL
+  }
+
+  public var raw: RawSyntax
+  init(raw: RawSyntax) {
+    assert(Self.isKindOf(raw))
+    self.raw = raw
+  }
+
+  public init?<Node: RawSyntaxNodeProtocol>(_ other: Node) {
+    guard Self.isKindOf(other.raw) else { return nil }
+    self.init(raw: other.raw)
+  }
+
+  public init(
+    arena: __shared SyntaxArena
+  ) {
+    let raw = RawSyntax.makeEmptyLayout(kind: .missingSIL, arena: arena)
     self.init(raw: raw)
   }
 
@@ -16211,5 +16295,58 @@ public struct RawVersionTupleSyntax: RawSyntaxNodeProtocol {
   }
   public var patchVersion: RawTokenSyntax? {
     layoutView.children[5].map(RawTokenSyntax.init(raw:))
+  }
+}
+
+@_spi(RawSyntax)
+public struct RawSILStageSyntax: RawSILSyntaxNodeProtocol {
+  var layoutView: RawSyntaxLayoutView {
+    return raw.layoutView!
+  }
+
+  public static func isKindOf(_ raw: RawSyntax) -> Bool {
+    return raw.kind == .silStage
+  }
+
+  public var raw: RawSyntax
+  init(raw: RawSyntax) {
+    assert(Self.isKindOf(raw))
+    self.raw = raw
+  }
+
+  public init?<Node: RawSyntaxNodeProtocol>(_ other: Node) {
+    guard Self.isKindOf(other.raw) else { return nil }
+    self.init(raw: other.raw)
+  }
+
+  public init(
+    _ unexpectedBeforeStageToken: RawUnexpectedNodesSyntax? = nil,
+    stageToken: RawTokenSyntax,
+    _ unexpectedBetweenStageTokenAndStageName: RawUnexpectedNodesSyntax? = nil,
+    stageName: RawTokenSyntax,
+    arena: __shared SyntaxArena
+  ) {
+    let raw = RawSyntax.makeLayout(
+      kind: .silStage, uninitializedCount: 4, arena: arena) { layout in
+      layout.initialize(repeating: nil)
+      layout[0] = unexpectedBeforeStageToken?.raw
+      layout[1] = stageToken.raw
+      layout[2] = unexpectedBetweenStageTokenAndStageName?.raw
+      layout[3] = stageName.raw
+    }
+    self.init(raw: raw)
+  }
+
+  public var unexpectedBeforeStageToken: RawUnexpectedNodesSyntax? {
+    layoutView.children[0].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var stageToken: RawTokenSyntax {
+    layoutView.children[1].map(RawTokenSyntax.init(raw:))!
+  }
+  public var unexpectedBetweenStageTokenAndStageName: RawUnexpectedNodesSyntax? {
+    layoutView.children[2].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var stageName: RawTokenSyntax {
+    layoutView.children[3].map(RawTokenSyntax.init(raw:))!
   }
 }

@@ -91,6 +91,16 @@ open class SyntaxVisitor {
   /// The function called after visiting `UnknownPatternSyntax` and its descendents.
   ///   - node: the node we just finished visiting.
   open func visitPost(_ node: UnknownPatternSyntax) {}
+  /// Visiting `UnknownSILSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: how should we continue visiting.
+  open func visit(_ node: UnknownSILSyntax) -> SyntaxVisitorContinueKind {
+    return .visitChildren
+  }
+
+  /// The function called after visiting `UnknownSILSyntax` and its descendents.
+  ///   - node: the node we just finished visiting.
+  open func visitPost(_ node: UnknownSILSyntax) {}
   /// Visiting `MissingSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: how should we continue visiting.
@@ -151,6 +161,16 @@ open class SyntaxVisitor {
   /// The function called after visiting `MissingPatternSyntax` and its descendents.
   ///   - node: the node we just finished visiting.
   open func visitPost(_ node: MissingPatternSyntax) {}
+  /// Visiting `MissingSILSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: how should we continue visiting.
+  open func visit(_ node: MissingSILSyntax) -> SyntaxVisitorContinueKind {
+    return .visitChildren
+  }
+
+  /// The function called after visiting `MissingSILSyntax` and its descendents.
+  ///   - node: the node we just finished visiting.
+  open func visitPost(_ node: MissingSILSyntax) {}
   /// Visiting `CodeBlockItemSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: how should we continue visiting.
@@ -2741,6 +2761,16 @@ open class SyntaxVisitor {
   /// The function called after visiting `VersionTupleSyntax` and its descendents.
   ///   - node: the node we just finished visiting.
   open func visitPost(_ node: VersionTupleSyntax) {}
+  /// Visiting `SILStageSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: how should we continue visiting.
+  open func visit(_ node: SILStageSyntax) -> SyntaxVisitorContinueKind {
+    return .visitChildren
+  }
+
+  /// The function called after visiting `SILStageSyntax` and its descendents.
+  ///   - node: the node we just finished visiting.
+  open func visitPost(_ node: SILStageSyntax) {}
 
   /// Visiting `TokenSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
@@ -2820,6 +2850,17 @@ open class SyntaxVisitor {
   }
 
   /// Implementation detail of doVisit(_:_:). Do not call directly.
+  private func visitImplSILSyntax(_ data: SyntaxData) {
+      let node = UnknownSILSyntax(data)
+      let needsChildren = (visit(node) == .visitChildren)
+      // Avoid calling into visitChildren if possible.
+      if needsChildren && !node.raw.layoutView!.children.isEmpty {
+        visitChildren(node)
+      }
+      visitPost(node)
+  }
+
+  /// Implementation detail of doVisit(_:_:). Do not call directly.
   private func visitImplUnknownDeclSyntax(_ data: SyntaxData) {
       let node = UnknownDeclSyntax(data)
       let needsChildren = (visit(node) == .visitChildren)
@@ -2866,6 +2907,17 @@ open class SyntaxVisitor {
   /// Implementation detail of doVisit(_:_:). Do not call directly.
   private func visitImplUnknownPatternSyntax(_ data: SyntaxData) {
       let node = UnknownPatternSyntax(data)
+      let needsChildren = (visit(node) == .visitChildren)
+      // Avoid calling into visitChildren if possible.
+      if needsChildren && !node.raw.layoutView!.children.isEmpty {
+        visitChildren(node)
+      }
+      visitPost(node)
+  }
+
+  /// Implementation detail of doVisit(_:_:). Do not call directly.
+  private func visitImplUnknownSILSyntax(_ data: SyntaxData) {
+      let node = UnknownSILSyntax(data)
       let needsChildren = (visit(node) == .visitChildren)
       // Avoid calling into visitChildren if possible.
       if needsChildren && !node.raw.layoutView!.children.isEmpty {
@@ -2932,6 +2984,17 @@ open class SyntaxVisitor {
   /// Implementation detail of doVisit(_:_:). Do not call directly.
   private func visitImplMissingPatternSyntax(_ data: SyntaxData) {
       let node = MissingPatternSyntax(data)
+      let needsChildren = (visit(node) == .visitChildren)
+      // Avoid calling into visitChildren if possible.
+      if needsChildren && !node.raw.layoutView!.children.isEmpty {
+        visitChildren(node)
+      }
+      visitPost(node)
+  }
+
+  /// Implementation detail of doVisit(_:_:). Do not call directly.
+  private func visitImplMissingSILSyntax(_ data: SyntaxData) {
+      let node = MissingSILSyntax(data)
       let needsChildren = (visit(node) == .visitChildren)
       // Avoid calling into visitChildren if possible.
       if needsChildren && !node.raw.layoutView!.children.isEmpty {
@@ -5789,6 +5852,17 @@ open class SyntaxVisitor {
       visitPost(node)
   }
 
+  /// Implementation detail of doVisit(_:_:). Do not call directly.
+  private func visitImplSILStageSyntax(_ data: SyntaxData) {
+      let node = SILStageSyntax(data)
+      let needsChildren = (visit(node) == .visitChildren)
+      // Avoid calling into visitChildren if possible.
+      if needsChildren && !node.raw.layoutView!.children.isEmpty {
+        visitChildren(node)
+      }
+      visitPost(node)
+  }
+
 
   private func visit(_ data: SyntaxData) {
     switch data.raw.kind {
@@ -5819,6 +5893,8 @@ open class SyntaxVisitor {
       visitImplUnknownTypeSyntax(data)
     case .unknownPattern:
       visitImplUnknownPatternSyntax(data)
+    case .unknownSIL:
+      visitImplUnknownSILSyntax(data)
     case .missing:
       visitImplMissingSyntax(data)
     case .missingDecl:
@@ -5831,6 +5907,8 @@ open class SyntaxVisitor {
       visitImplMissingTypeSyntax(data)
     case .missingPattern:
       visitImplMissingPatternSyntax(data)
+    case .missingSIL:
+      visitImplMissingSILSyntax(data)
     case .codeBlockItem:
       visitImplCodeBlockItemSyntax(data)
     case .codeBlockItemList:
@@ -6349,6 +6427,8 @@ open class SyntaxVisitor {
       visitImplAvailabilityVersionRestrictionSyntax(data)
     case .versionTuple:
       visitImplVersionTupleSyntax(data)
+    case .silStage:
+      visitImplSILStageSyntax(data)
     }
   }
 

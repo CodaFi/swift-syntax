@@ -49,6 +49,7 @@ public enum SyntaxFactory {
 
 
 
+
   @available(*, deprecated, message: "Use initializer on UnknownDeclSyntax")
   public static func makeBlankUnknownDecl(presence: SourcePresence = .present) -> UnknownDeclSyntax {
     let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .unknownDecl,
@@ -87,6 +88,14 @@ public enum SyntaxFactory {
       from: [
     ], arena: .default))
     return UnknownPatternSyntax(data)
+  }
+
+  @available(*, deprecated, message: "Use initializer on UnknownSILSyntax")
+  public static func makeBlankUnknownSIL(presence: SourcePresence = .present) -> UnknownSILSyntax {
+    let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .unknownSIL,
+      from: [
+    ], arena: .default))
+    return UnknownSILSyntax(data)
   }
 
   @available(*, deprecated, message: "Use initializer on MissingSyntax")
@@ -152,6 +161,14 @@ public enum SyntaxFactory {
       from: [
     ], arena: .default))
     return MissingPatternSyntax(data)
+  }
+
+  @available(*, deprecated, message: "Use initializer on MissingSILSyntax")
+  public static func makeBlankMissingSIL(presence: SourcePresence = .missing) -> MissingSILSyntax {
+    let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .missingSIL,
+      from: [
+    ], arena: .default))
+    return MissingSILSyntax(data)
   }
   @available(*, deprecated, message: "Use initializer on CodeBlockItemSyntax")
   public static func makeCodeBlockItem(_ unexpectedBeforeItem: UnexpectedNodesSyntax? = nil, item: Syntax, _ unexpectedBetweenItemAndSemicolon: UnexpectedNodesSyntax? = nil, semicolon: TokenSyntax?, _ unexpectedBetweenSemicolonAndErrorTokens: UnexpectedNodesSyntax? = nil, errorTokens: Syntax?) -> CodeBlockItemSyntax {
@@ -7295,6 +7312,31 @@ public enum SyntaxFactory {
       nil,
     ], arena: .default))
     return VersionTupleSyntax(data)
+  }
+  @available(*, deprecated, message: "Use initializer on SILStageSyntax")
+  public static func makeSILStage(_ unexpectedBeforeStageToken: UnexpectedNodesSyntax? = nil, stageToken: TokenSyntax, _ unexpectedBetweenStageTokenAndStageName: UnexpectedNodesSyntax? = nil, stageName: TokenSyntax) -> SILStageSyntax {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeStageToken?.raw,
+      stageToken.raw,
+      unexpectedBetweenStageTokenAndStageName?.raw,
+      stageName.raw,
+    ]
+    let raw = RawSyntax.makeLayout(kind: SyntaxKind.silStage,
+      from: layout, arena: .default)
+    let data = SyntaxData.forRoot(raw)
+    return SILStageSyntax(data)
+  }
+
+  @available(*, deprecated, message: "Use initializer on SILStageSyntax")
+  public static func makeBlankSILStage(presence: SourcePresence = .present) -> SILStageSyntax {
+    let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .silStage,
+      from: [
+      nil,
+      RawSyntax.makeMissingToken(kind: TokenKind.unknown(""), arena: .default),
+      nil,
+      RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: .default),
+    ], arena: .default))
+    return SILStageSyntax(data)
   }
 
 /// MARK: Token Creation APIs

@@ -3,7 +3,8 @@ All the known base syntax kinds. These will all be considered non-final classes
 and other types will be allowed to inherit from them.
 """
 SYNTAX_BASE_KINDS = ['Decl', 'Expr', 'Pattern', 'Stmt',
-                     'Syntax', 'SyntaxCollection', 'Type']
+                     'Syntax', 'SyntaxCollection', 'Type',
+                     'SIL']
 
 
 def kind_to_type(kind):

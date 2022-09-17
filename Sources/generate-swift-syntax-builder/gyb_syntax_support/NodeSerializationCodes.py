@@ -281,6 +281,10 @@ SYNTAX_NODE_SERIALIZATION_CODES = {
     'ConventionWitnessMethodAttributeArguments': 277,
     'DesignatedTypeElement': 278,
     'NamedOpaqueReturnType': 279,
+    'SIL': 280,
+    'UnknownSIL': 281,
+    'MissingSIL': 282,
+    'SILStage': 283,
 }
 
 

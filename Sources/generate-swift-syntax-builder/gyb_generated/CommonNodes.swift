@@ -33,6 +33,10 @@ let COMMON_NODES: [Node] = [
        nameForDiagnostics: "pattern",
        kind: "Syntax"),
 
+  Node(name: "SIL",
+       nameForDiagnostics: "SIL",
+       kind: "Syntax"),
+
   Node(name: "UnknownDecl",
        nameForDiagnostics: "declaration",
        kind: "Decl"),
@@ -52,6 +56,10 @@ let COMMON_NODES: [Node] = [
   Node(name: "UnknownPattern",
        nameForDiagnostics: "pattern",
        kind: "Pattern"),
+
+  Node(name: "UnknownSIL",
+       nameForDiagnostics: "SIL",
+       kind: "SIL"),
 
   Node(name: "Missing",
        nameForDiagnostics: nil,
@@ -87,6 +95,10 @@ let COMMON_NODES: [Node] = [
        nameForDiagnostics: "pattern",
        kind: "Pattern"),
 
+  Node(name: "MissingSIL",
+       nameForDiagnostics: "SIL",
+       kind: "SIL"),
+
   Node(name: "CodeBlockItem",
        nameForDiagnostics: nil,
        description: "A CodeBlockItem is any Syntax node that appears on its own line insidea CodeBlock.",
@@ -102,6 +114,8 @@ let COMMON_NODES: [Node] = [
                        kind: "Stmt"),
                  Child(name: "Expr",
                        kind: "Expr"),
+                 Child(name: "SIL",
+                       kind: "SIL"),
                  Child(name: "TokenList",
                        kind: "TokenList"),
                  Child(name: "NonEmptyTokenList",

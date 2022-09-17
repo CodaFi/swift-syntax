@@ -45,6 +45,7 @@ BASE_KIND_FILES = {
     "Stmt": "SyntaxStmtNodes.swift",
     "Syntax": "SyntaxNodes.swift",
     "Type": "SyntaxTypeNodes.swift",
+    "SIL": "SyntaxSILNodes.swift",
 }
 
 

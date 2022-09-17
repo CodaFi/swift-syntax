@@ -96,6 +96,13 @@ open class SyntaxAnyVisitor: SyntaxVisitor {
   override open func visitPost(_ node: UnknownPatternSyntax) {
     visitAnyPost(node._syntaxNode)
   }
+  override open func visit(_ node: UnknownSILSyntax) -> SyntaxVisitorContinueKind {
+    return visitAny(node._syntaxNode)
+  }
+
+  override open func visitPost(_ node: UnknownSILSyntax) {
+    visitAnyPost(node._syntaxNode)
+  }
   override open func visit(_ node: MissingSyntax) -> SyntaxVisitorContinueKind {
     return visitAny(node._syntaxNode)
   }
@@ -136,6 +143,13 @@ open class SyntaxAnyVisitor: SyntaxVisitor {
   }
 
   override open func visitPost(_ node: MissingPatternSyntax) {
+    visitAnyPost(node._syntaxNode)
+  }
+  override open func visit(_ node: MissingSILSyntax) -> SyntaxVisitorContinueKind {
+    return visitAny(node._syntaxNode)
+  }
+
+  override open func visitPost(_ node: MissingSILSyntax) {
     visitAnyPost(node._syntaxNode)
   }
   override open func visit(_ node: CodeBlockItemSyntax) -> SyntaxVisitorContinueKind {
@@ -1949,6 +1963,13 @@ open class SyntaxAnyVisitor: SyntaxVisitor {
   }
 
   override open func visitPost(_ node: VersionTupleSyntax) {
+    visitAnyPost(node._syntaxNode)
+  }
+  override open func visit(_ node: SILStageSyntax) -> SyntaxVisitorContinueKind {
+    return visitAny(node._syntaxNode)
+  }
+
+  override open func visitPost(_ node: SILStageSyntax) {
     visitAnyPost(node._syntaxNode)
   }
 

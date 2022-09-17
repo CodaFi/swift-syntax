@@ -1,4 +1,10 @@
-//// Automatically Generated From SyntaxBaseKinds.swift.gyb.
+%{
+  from gyb_syntax_support import *
+  from gyb_helpers import make_swift_child, make_swift_node
+  # -*- mode: Swift -*-
+  # Ignore the following admonition it applies to the resulting .swift file only
+}%
+//// Automatically Generated From SILNodes.swift.gyb.
 //// Do Not Edit Directly!
 //===----------------------------------------------------------------------===//
 //
@@ -12,13 +18,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-let SYNTAX_BASE_KINDS: Set<String> = [
-  "Decl",
-  "Expr",
-  "Pattern",
-  "Stmt",
-  "Syntax",
-  "SyntaxCollection",
-  "Type",
-  "SIL",
+let SIL_NODES: [Node] = [
+% for node in SIL_NODES:
+  ${make_swift_node(node)},
+
+% end
 ]

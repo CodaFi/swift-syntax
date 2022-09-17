@@ -22,12 +22,14 @@ public enum SyntaxKind {
   case unknownStmt
   case unknownType
   case unknownPattern
+  case unknownSIL
   case missing
   case missingDecl
   case missingExpr
   case missingStmt
   case missingType
   case missingPattern
+  case missingSIL
   case codeBlockItem
   case codeBlockItemList
   case codeBlock
@@ -287,6 +289,7 @@ public enum SyntaxKind {
   case availabilityLabeledArgument
   case availabilityVersionRestriction
   case versionTuple
+  case silStage
 
   var isSyntaxCollection: Bool {
     switch self {
@@ -346,6 +349,7 @@ public enum SyntaxKind {
     case .unknownPattern: return true
     case .unknownStmt: return true
     case .unknownType: return true
+    case .unknownSIL: return true
     case .unknown: return true
     default: return false
     }
@@ -358,6 +362,7 @@ public enum SyntaxKind {
     case .missingPattern: return true
     case .missingStmt: return true
     case .missingType: return true
+    case .missingSIL: return true
     case .missing: return true
     default: return false
     }

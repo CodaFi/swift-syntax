@@ -107,6 +107,37 @@ public extension PatternBuildable {
     return Syntax(buildPattern(format: format))
   }
 }
+public protocol SILListBuildable: SyntaxListBuildable {
+  /// Builds list of `SILSyntax`s.
+  /// - Parameter format: The `Format` to use.
+  func buildSILList(format: Format) -> [SILSyntax]
+}
+public protocol SILBuildable: ExpressibleAsSILBuildable, SILListBuildable, SyntaxBuildable {
+  /// Builds list of `SILSyntax`s.
+  /// - Parameter format: The `Format` to use.
+  func buildSIL(format: Format) -> SILSyntax
+}
+public extension SILBuildable {
+  /// Satisfies conformance to `ExpressibleAsSILBuildable`.
+  func createSILBuildable() -> SILBuildable {
+    return self
+  }
+  /// Builds list of `SILSyntax`s.
+  /// - Parameter format: The `Format` to use.
+  ///
+  /// Satisfies conformance to `SILListBuildable`
+  func buildSILList(format: Format) -> [SILSyntax] {
+    return [buildSIL(format: format)]
+  }
+  /// Builds a `SILSyntax`.
+  /// - Parameter format: The `Format` to use.
+  /// - Returns: A new `Syntax` with the built `SILSyntax`.
+  ///
+  /// Satisfies conformance to `SyntaxBuildable`.
+  func buildSyntax(format: Format) -> Syntax {
+    return Syntax(buildSIL(format: format))
+  }
+}
 public protocol StmtListBuildable: SyntaxListBuildable {
   /// Builds list of `StmtSyntax`s.
   /// - Parameter format: The `Format` to use.

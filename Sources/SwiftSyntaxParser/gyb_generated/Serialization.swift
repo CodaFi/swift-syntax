@@ -24,12 +24,14 @@ extension SyntaxKind {
     case 71: self = .unknownStmt
     case 211: self = .unknownType
     case 201: self = .unknownPattern
+    case 281: self = .unknownSIL
     case 260: self = .missing
     case 261: self = .missingDecl
     case 262: self = .missingExpr
     case 263: self = .missingStmt
     case 264: self = .missingType
     case 265: self = .missingPattern
+    case 282: self = .missingSIL
     case 92: self = .codeBlockItem
     case 163: self = .codeBlockItemList
     case 93: self = .codeBlock
@@ -289,6 +291,7 @@ extension SyntaxKind {
     case 160: self = .availabilityLabeledArgument
     case 161: self = .availabilityVersionRestriction
     case 162: self = .versionTuple
+    case 283: self = .silStage
     default:
       fatalError("unknown SyntaxKind serializationCode \(serializationCode)")
     }

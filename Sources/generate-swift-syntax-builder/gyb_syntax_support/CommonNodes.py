@@ -7,11 +7,14 @@ COMMON_NODES = [
     Node('Stmt', name_for_diagnostics='statement', kind='Syntax'),
     Node('Type', name_for_diagnostics='type', kind='Syntax'),
     Node('Pattern', name_for_diagnostics='pattern', kind='Syntax'),
+    Node('SIL', name_for_diagnostics='SIL', kind='Syntax'),
     Node('UnknownDecl', name_for_diagnostics='declaration', kind='Decl'),
     Node('UnknownExpr', name_for_diagnostics='expression', kind='Expr'),
     Node('UnknownStmt', name_for_diagnostics='statement', kind='Stmt'),
     Node('UnknownType', name_for_diagnostics='type', kind='Type'),
     Node('UnknownPattern', name_for_diagnostics='pattern', kind='Pattern'),
+    Node('UnknownSIL', name_for_diagnostics='SIL', kind='SIL'),
+
     Node('Missing', name_for_diagnostics=None, kind='Syntax'),
     Node('MissingDecl', name_for_diagnostics='declaration', kind='Decl', children=[
         Child('Attributes', kind='AttributeList',
@@ -23,6 +26,7 @@ COMMON_NODES = [
     Node('MissingStmt', name_for_diagnostics='statement', kind='Stmt'),
     Node('MissingType', name_for_diagnostics='type', kind='Type'),
     Node('MissingPattern', name_for_diagnostics='pattern', kind='Pattern'),
+    Node('MissingSIL', name_for_diagnostics='SIL', kind='SIL'),
 
     # code-block-item = (decl | stmt | expr) ';'?
     Node('CodeBlockItem', name_for_diagnostics=None, kind='Syntax',
@@ -38,6 +42,7 @@ COMMON_NODES = [
                        Child('Decl', kind='Decl'),
                        Child('Stmt', kind='Stmt'),
                        Child('Expr', kind='Expr'),
+                       Child('SIL', kind='SIL'),
                        Child('TokenList', kind='TokenList'),
                        Child('NonEmptyTokenList', kind='NonEmptyTokenList'),
                    ]),

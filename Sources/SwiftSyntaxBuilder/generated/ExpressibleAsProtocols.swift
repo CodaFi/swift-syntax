@@ -47,6 +47,9 @@ public extension ExpressibleAsExprBuildable {
 public protocol ExpressibleAsPatternBuildable {
   func createPatternBuildable() -> PatternBuildable
 }
+public protocol ExpressibleAsSILBuildable {
+  func createSILBuildable() -> SILBuildable
+}
 public protocol ExpressibleAsStmtBuildable: ExpressibleAsCodeBlockItem {
   func createStmtBuildable() -> StmtBuildable
 }

@@ -21,12 +21,14 @@ public enum SyntaxEnum {
   case unknownStmt(UnknownStmtSyntax)
   case unknownType(UnknownTypeSyntax)
   case unknownPattern(UnknownPatternSyntax)
+  case unknownSIL(UnknownSILSyntax)
   case missing(MissingSyntax)
   case missingDecl(MissingDeclSyntax)
   case missingExpr(MissingExprSyntax)
   case missingStmt(MissingStmtSyntax)
   case missingType(MissingTypeSyntax)
   case missingPattern(MissingPatternSyntax)
+  case missingSIL(MissingSILSyntax)
   case codeBlockItem(CodeBlockItemSyntax)
   case codeBlockItemList(CodeBlockItemListSyntax)
   case codeBlock(CodeBlockSyntax)
@@ -286,6 +288,7 @@ public enum SyntaxEnum {
   case availabilityLabeledArgument(AvailabilityLabeledArgumentSyntax)
   case availabilityVersionRestriction(AvailabilityVersionRestrictionSyntax)
   case versionTuple(VersionTupleSyntax)
+  case silStage(SILStageSyntax)
 
   public var nameForDiagnostics: String? {
     switch self {
@@ -303,6 +306,8 @@ public enum SyntaxEnum {
       return "type"
     case .unknownPattern:
       return "pattern"
+    case .unknownSIL:
+      return "SIL"
     case .missing:
       return nil
     case .missingDecl:
@@ -315,6 +320,8 @@ public enum SyntaxEnum {
       return "type"
     case .missingPattern:
       return "pattern"
+    case .missingSIL:
+      return "SIL"
     case .codeBlockItem:
       return nil
     case .codeBlockItemList:
@@ -833,6 +840,8 @@ public enum SyntaxEnum {
       return "'@available' argument"
     case .versionTuple:
       return "version tuple"
+    case .silStage:
+      return "SIL stage"
     }
   }
 }
@@ -855,6 +864,8 @@ public extension Syntax {
       return .unknownType(UnknownTypeSyntax(self)!)
     case .unknownPattern:
       return .unknownPattern(UnknownPatternSyntax(self)!)
+    case .unknownSIL:
+      return .unknownSIL(UnknownSILSyntax(self)!)
     case .missing:
       return .missing(MissingSyntax(self)!)
     case .missingDecl:
@@ -867,6 +878,8 @@ public extension Syntax {
       return .missingType(MissingTypeSyntax(self)!)
     case .missingPattern:
       return .missingPattern(MissingPatternSyntax(self)!)
+    case .missingSIL:
+      return .missingSIL(MissingSILSyntax(self)!)
     case .codeBlockItem:
       return .codeBlockItem(CodeBlockItemSyntax(self)!)
     case .codeBlockItemList:
@@ -1385,6 +1398,8 @@ public extension Syntax {
       return .availabilityVersionRestriction(AvailabilityVersionRestrictionSyntax(self)!)
     case .versionTuple:
       return .versionTuple(VersionTupleSyntax(self)!)
+    case .silStage:
+      return .silStage(SILStageSyntax(self)!)
     }
   }
 }
