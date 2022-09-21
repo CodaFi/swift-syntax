@@ -1846,6 +1846,13 @@ open class SyntaxAnyVisitor: SyntaxVisitor {
   override open func visitPost(_ node: NamedOpaqueReturnTypeSyntax) {
     visitAnyPost(node._syntaxNode)
   }
+  override open func visit(_ node: SILTypeSyntax) -> SyntaxVisitorContinueKind {
+    return visitAny(node._syntaxNode)
+  }
+
+  override open func visitPost(_ node: SILTypeSyntax) {
+    visitAnyPost(node._syntaxNode)
+  }
   override open func visit(_ node: TypeAnnotationSyntax) -> SyntaxVisitorContinueKind {
     return visitAny(node._syntaxNode)
   }
@@ -1970,6 +1977,13 @@ open class SyntaxAnyVisitor: SyntaxVisitor {
   }
 
   override open func visitPost(_ node: SILStageSyntax) {
+    visitAnyPost(node._syntaxNode)
+  }
+  override open func visit(_ node: SILGlobalSyntax) -> SyntaxVisitorContinueKind {
+    return visitAny(node._syntaxNode)
+  }
+
+  override open func visitPost(_ node: SILGlobalSyntax) {
     visitAnyPost(node._syntaxNode)
   }
 

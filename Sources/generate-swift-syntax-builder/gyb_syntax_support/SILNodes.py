@@ -9,6 +9,26 @@ SIL_NODES = [
              Child('StageName', kind='IdentifierToken'),
          ]),
 
+    # sil-global-variable -> 'sil_global' sil-linkage identifier ':' sil-type
+    #                        (static-initializer)?
+    Node('SILGlobal', name_for_diagnostics='SIL global', kind='SIL',
+     children=[
+         Child('SILGlobalToken', kind='Token'),
+         Child('Linkage', kind='Token',
+               text_choices=[
+                  'public',
+                  'hidden',
+                  'shared',
+                  'private',
+                  'public_external',
+                  'hidden_external',
+                  'non_abi',
+               ]),
+         Child('Identifier', kind='IdentifierToken'),
+         Child('Colon', kind='ColonToken'),
+         Child('SILType', kind='SILType'),
+     ]),
+
 #    CASE_SIL(sil, DeclSIL)
 #    CASE_SIL(sil_vtable, SILVTable)
 #    CASE_SIL(sil_global, SILGlobal)

@@ -2711,3 +2711,231 @@ extension NamedOpaqueReturnTypeSyntax: CustomReflectable {
   }
 }
 
+// MARK: - SILTypeSyntax
+
+public struct SILTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
+  public let _syntaxNode: Syntax
+
+  /// Converts the given `Syntax` node to a `SILTypeSyntax` if possible. Returns
+  /// `nil` if the conversion is not possible.
+  public init?(_ syntax: Syntax) {
+    guard syntax.raw.kind == .silType else { return nil }
+    self._syntaxNode = syntax
+  }
+
+  /// Creates a `SILTypeSyntax` node from the given `SyntaxData`. This assumes
+  /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
+  /// is undefined.
+  internal init(_ data: SyntaxData) {
+    assert(data.raw.kind == .silType)
+    self._syntaxNode = Syntax(data)
+  }
+
+  public init(
+    _ unexpectedBeforeDollarToken: UnexpectedNodesSyntax? = nil,
+    dollarToken: TokenSyntax,
+    _ unexpectedBetweenDollarTokenAndAddressOnlyStar: UnexpectedNodesSyntax? = nil,
+    addressOnlyStar: TokenSyntax?,
+    _ unexpectedBetweenAddressOnlyStarAndGenericParameters: UnexpectedNodesSyntax? = nil,
+    genericParameters: GenericParameterClauseSyntax?,
+    _ unexpectedBetweenGenericParametersAndBaseType: UnexpectedNodesSyntax? = nil,
+    baseType: TypeSyntax
+  ) {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeDollarToken?.raw,
+      dollarToken.raw,
+      unexpectedBetweenDollarTokenAndAddressOnlyStar?.raw,
+      addressOnlyStar?.raw,
+      unexpectedBetweenAddressOnlyStarAndGenericParameters?.raw,
+      genericParameters?.raw,
+      unexpectedBetweenGenericParametersAndBaseType?.raw,
+      baseType.raw,
+    ]
+    let raw = RawSyntax.makeLayout(kind: SyntaxKind.silType,
+      from: layout, arena: .default)
+    let data = SyntaxData.forRoot(raw)
+    self.init(data)
+  }
+
+  public var unexpectedBeforeDollarToken: UnexpectedNodesSyntax? {
+    get {
+      let childData = data.child(at: 0, parent: Syntax(self))
+      if childData == nil { return nil }
+      return UnexpectedNodesSyntax(childData!)
+    }
+    set(value) {
+      self = withUnexpectedBeforeDollarToken(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `unexpectedBeforeDollarToken` replaced.
+  /// - param newChild: The new `unexpectedBeforeDollarToken` to replace the node's
+  ///                   current `unexpectedBeforeDollarToken`, if present.
+  public func withUnexpectedBeforeDollarToken(
+    _ newChild: UnexpectedNodesSyntax?) -> SILTypeSyntax {
+    let raw = newChild?.raw
+    let newData = data.replacingChild(raw, at: 0)
+    return SILTypeSyntax(newData)
+  }
+
+  public var dollarToken: TokenSyntax {
+    get {
+      let childData = data.child(at: 1, parent: Syntax(self))
+      return TokenSyntax(childData!)
+    }
+    set(value) {
+      self = withDollarToken(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `dollarToken` replaced.
+  /// - param newChild: The new `dollarToken` to replace the node's
+  ///                   current `dollarToken`, if present.
+  public func withDollarToken(
+    _ newChild: TokenSyntax?) -> SILTypeSyntax {
+    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.unknown(""), arena: .default)
+    let newData = data.replacingChild(raw, at: 1)
+    return SILTypeSyntax(newData)
+  }
+
+  public var unexpectedBetweenDollarTokenAndAddressOnlyStar: UnexpectedNodesSyntax? {
+    get {
+      let childData = data.child(at: 2, parent: Syntax(self))
+      if childData == nil { return nil }
+      return UnexpectedNodesSyntax(childData!)
+    }
+    set(value) {
+      self = withUnexpectedBetweenDollarTokenAndAddressOnlyStar(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `unexpectedBetweenDollarTokenAndAddressOnlyStar` replaced.
+  /// - param newChild: The new `unexpectedBetweenDollarTokenAndAddressOnlyStar` to replace the node's
+  ///                   current `unexpectedBetweenDollarTokenAndAddressOnlyStar`, if present.
+  public func withUnexpectedBetweenDollarTokenAndAddressOnlyStar(
+    _ newChild: UnexpectedNodesSyntax?) -> SILTypeSyntax {
+    let raw = newChild?.raw
+    let newData = data.replacingChild(raw, at: 2)
+    return SILTypeSyntax(newData)
+  }
+
+  public var addressOnlyStar: TokenSyntax? {
+    get {
+      let childData = data.child(at: 3, parent: Syntax(self))
+      if childData == nil { return nil }
+      return TokenSyntax(childData!)
+    }
+    set(value) {
+      self = withAddressOnlyStar(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `addressOnlyStar` replaced.
+  /// - param newChild: The new `addressOnlyStar` to replace the node's
+  ///                   current `addressOnlyStar`, if present.
+  public func withAddressOnlyStar(
+    _ newChild: TokenSyntax?) -> SILTypeSyntax {
+    let raw = newChild?.raw
+    let newData = data.replacingChild(raw, at: 3)
+    return SILTypeSyntax(newData)
+  }
+
+  public var unexpectedBetweenAddressOnlyStarAndGenericParameters: UnexpectedNodesSyntax? {
+    get {
+      let childData = data.child(at: 4, parent: Syntax(self))
+      if childData == nil { return nil }
+      return UnexpectedNodesSyntax(childData!)
+    }
+    set(value) {
+      self = withUnexpectedBetweenAddressOnlyStarAndGenericParameters(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `unexpectedBetweenAddressOnlyStarAndGenericParameters` replaced.
+  /// - param newChild: The new `unexpectedBetweenAddressOnlyStarAndGenericParameters` to replace the node's
+  ///                   current `unexpectedBetweenAddressOnlyStarAndGenericParameters`, if present.
+  public func withUnexpectedBetweenAddressOnlyStarAndGenericParameters(
+    _ newChild: UnexpectedNodesSyntax?) -> SILTypeSyntax {
+    let raw = newChild?.raw
+    let newData = data.replacingChild(raw, at: 4)
+    return SILTypeSyntax(newData)
+  }
+
+  public var genericParameters: GenericParameterClauseSyntax? {
+    get {
+      let childData = data.child(at: 5, parent: Syntax(self))
+      if childData == nil { return nil }
+      return GenericParameterClauseSyntax(childData!)
+    }
+    set(value) {
+      self = withGenericParameters(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `genericParameters` replaced.
+  /// - param newChild: The new `genericParameters` to replace the node's
+  ///                   current `genericParameters`, if present.
+  public func withGenericParameters(
+    _ newChild: GenericParameterClauseSyntax?) -> SILTypeSyntax {
+    let raw = newChild?.raw
+    let newData = data.replacingChild(raw, at: 5)
+    return SILTypeSyntax(newData)
+  }
+
+  public var unexpectedBetweenGenericParametersAndBaseType: UnexpectedNodesSyntax? {
+    get {
+      let childData = data.child(at: 6, parent: Syntax(self))
+      if childData == nil { return nil }
+      return UnexpectedNodesSyntax(childData!)
+    }
+    set(value) {
+      self = withUnexpectedBetweenGenericParametersAndBaseType(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `unexpectedBetweenGenericParametersAndBaseType` replaced.
+  /// - param newChild: The new `unexpectedBetweenGenericParametersAndBaseType` to replace the node's
+  ///                   current `unexpectedBetweenGenericParametersAndBaseType`, if present.
+  public func withUnexpectedBetweenGenericParametersAndBaseType(
+    _ newChild: UnexpectedNodesSyntax?) -> SILTypeSyntax {
+    let raw = newChild?.raw
+    let newData = data.replacingChild(raw, at: 6)
+    return SILTypeSyntax(newData)
+  }
+
+  public var baseType: TypeSyntax {
+    get {
+      let childData = data.child(at: 7, parent: Syntax(self))
+      return TypeSyntax(childData!)
+    }
+    set(value) {
+      self = withBaseType(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `baseType` replaced.
+  /// - param newChild: The new `baseType` to replace the node's
+  ///                   current `baseType`, if present.
+  public func withBaseType(
+    _ newChild: TypeSyntax?) -> SILTypeSyntax {
+    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingType, arena: .default)
+    let newData = data.replacingChild(raw, at: 7)
+    return SILTypeSyntax(newData)
+  }
+}
+
+extension SILTypeSyntax: CustomReflectable {
+  public var customMirror: Mirror {
+    return Mirror(self, children: [
+      "unexpectedBeforeDollarToken": unexpectedBeforeDollarToken.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "dollarToken": Syntax(dollarToken).asProtocol(SyntaxProtocol.self),
+      "unexpectedBetweenDollarTokenAndAddressOnlyStar": unexpectedBetweenDollarTokenAndAddressOnlyStar.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "addressOnlyStar": addressOnlyStar.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "unexpectedBetweenAddressOnlyStarAndGenericParameters": unexpectedBetweenAddressOnlyStarAndGenericParameters.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "genericParameters": genericParameters.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "unexpectedBetweenGenericParametersAndBaseType": unexpectedBetweenGenericParametersAndBaseType.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "baseType": Syntax(baseType).asProtocol(SyntaxProtocol.self),
+    ])
+  }
+}
+

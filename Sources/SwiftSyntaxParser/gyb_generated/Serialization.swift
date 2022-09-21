@@ -274,6 +274,7 @@ extension SyntaxKind {
     case 155: self = .genericArgument
     case 156: self = .genericArgumentClause
     case 279: self = .namedOpaqueReturnType
+    case 284: self = .silType
     case 157: self = .typeAnnotation
     case 202: self = .enumCasePattern
     case 203: self = .isTypePattern
@@ -292,6 +293,7 @@ extension SyntaxKind {
     case 161: self = .availabilityVersionRestriction
     case 162: self = .versionTuple
     case 283: self = .silStage
+    case 285: self = .silGlobal
     default:
       fatalError("unknown SyntaxKind serializationCode \(serializationCode)")
     }

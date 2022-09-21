@@ -6882,6 +6882,39 @@ public enum SyntaxFactory {
     ], arena: .default))
     return NamedOpaqueReturnTypeSyntax(data)
   }
+  @available(*, deprecated, message: "Use initializer on SILTypeSyntax")
+  public static func makeSILType(_ unexpectedBeforeDollarToken: UnexpectedNodesSyntax? = nil, dollarToken: TokenSyntax, _ unexpectedBetweenDollarTokenAndAddressOnlyStar: UnexpectedNodesSyntax? = nil, addressOnlyStar: TokenSyntax?, _ unexpectedBetweenAddressOnlyStarAndGenericParameters: UnexpectedNodesSyntax? = nil, genericParameters: GenericParameterClauseSyntax?, _ unexpectedBetweenGenericParametersAndBaseType: UnexpectedNodesSyntax? = nil, baseType: TypeSyntax) -> SILTypeSyntax {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeDollarToken?.raw,
+      dollarToken.raw,
+      unexpectedBetweenDollarTokenAndAddressOnlyStar?.raw,
+      addressOnlyStar?.raw,
+      unexpectedBetweenAddressOnlyStarAndGenericParameters?.raw,
+      genericParameters?.raw,
+      unexpectedBetweenGenericParametersAndBaseType?.raw,
+      baseType.raw,
+    ]
+    let raw = RawSyntax.makeLayout(kind: SyntaxKind.silType,
+      from: layout, arena: .default)
+    let data = SyntaxData.forRoot(raw)
+    return SILTypeSyntax(data)
+  }
+
+  @available(*, deprecated, message: "Use initializer on SILTypeSyntax")
+  public static func makeBlankSILType(presence: SourcePresence = .present) -> SILTypeSyntax {
+    let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .silType,
+      from: [
+      nil,
+      RawSyntax.makeMissingToken(kind: TokenKind.unknown(""), arena: .default),
+      nil,
+      nil,
+      nil,
+      nil,
+      nil,
+      RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingType, arena: .default),
+    ], arena: .default))
+    return SILTypeSyntax(data)
+  }
   @available(*, deprecated, message: "Use initializer on TypeAnnotationSyntax")
   public static func makeTypeAnnotation(_ unexpectedBeforeColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax, _ unexpectedBetweenColonAndType: UnexpectedNodesSyntax? = nil, type: TypeSyntax) -> TypeAnnotationSyntax {
     let layout: [RawSyntax?] = [
@@ -7337,6 +7370,43 @@ public enum SyntaxFactory {
       RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: .default),
     ], arena: .default))
     return SILStageSyntax(data)
+  }
+  @available(*, deprecated, message: "Use initializer on SILGlobalSyntax")
+  public static func makeSILGlobal(_ unexpectedBeforeSILGlobalToken: UnexpectedNodesSyntax? = nil, silGlobalToken: TokenSyntax, _ unexpectedBetweenSILGlobalTokenAndLinkage: UnexpectedNodesSyntax? = nil, linkage: TokenSyntax, _ unexpectedBetweenLinkageAndIdentifier: UnexpectedNodesSyntax? = nil, identifier: TokenSyntax, _ unexpectedBetweenIdentifierAndColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax, _ unexpectedBetweenColonAndSILType: UnexpectedNodesSyntax? = nil, silType: SILTypeSyntax) -> SILGlobalSyntax {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeSILGlobalToken?.raw,
+      silGlobalToken.raw,
+      unexpectedBetweenSILGlobalTokenAndLinkage?.raw,
+      linkage.raw,
+      unexpectedBetweenLinkageAndIdentifier?.raw,
+      identifier.raw,
+      unexpectedBetweenIdentifierAndColon?.raw,
+      colon.raw,
+      unexpectedBetweenColonAndSILType?.raw,
+      silType.raw,
+    ]
+    let raw = RawSyntax.makeLayout(kind: SyntaxKind.silGlobal,
+      from: layout, arena: .default)
+    let data = SyntaxData.forRoot(raw)
+    return SILGlobalSyntax(data)
+  }
+
+  @available(*, deprecated, message: "Use initializer on SILGlobalSyntax")
+  public static func makeBlankSILGlobal(presence: SourcePresence = .present) -> SILGlobalSyntax {
+    let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .silGlobal,
+      from: [
+      nil,
+      RawSyntax.makeMissingToken(kind: TokenKind.unknown(""), arena: .default),
+      nil,
+      RawSyntax.makeMissingToken(kind: TokenKind.unknown(""), arena: .default),
+      nil,
+      RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: .default),
+      nil,
+      RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: .default),
+      nil,
+      RawSyntax.makeEmptyLayout(kind: SyntaxKind.silType, arena: .default),
+    ], arena: .default))
+    return SILGlobalSyntax(data)
   }
 
 /// MARK: Token Creation APIs

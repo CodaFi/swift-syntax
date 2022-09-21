@@ -539,6 +539,8 @@ extension Syntax {
       return node
     case .namedOpaqueReturnType(let node):
       return node
+    case .silType(let node):
+      return node
     case .typeAnnotation(let node):
       return node
     case .enumCasePattern(let node):
@@ -574,6 +576,8 @@ extension Syntax {
     case .versionTuple(let node):
       return node
     case .silStage(let node):
+      return node
+    case .silGlobal(let node):
       return node
     }
   }
@@ -839,6 +843,7 @@ extension SyntaxKind {
     case .genericArgument: return GenericArgumentSyntax.self
     case .genericArgumentClause: return GenericArgumentClauseSyntax.self
     case .namedOpaqueReturnType: return NamedOpaqueReturnTypeSyntax.self
+    case .silType: return SILTypeSyntax.self
     case .typeAnnotation: return TypeAnnotationSyntax.self
     case .enumCasePattern: return EnumCasePatternSyntax.self
     case .isTypePattern: return IsTypePatternSyntax.self
@@ -857,6 +862,7 @@ extension SyntaxKind {
     case .availabilityVersionRestriction: return AvailabilityVersionRestrictionSyntax.self
     case .versionTuple: return VersionTupleSyntax.self
     case .silStage: return SILStageSyntax.self
+    case .silGlobal: return SILGlobalSyntax.self
     }
   }
 }

@@ -121,7 +121,7 @@ public struct RawTypeSyntax: RawTypeSyntaxNodeProtocol {
 
   public static func isKindOf(_ raw: RawSyntax) -> Bool {
     switch raw.kind {
-    case .unknownType, .missingType, .simpleTypeIdentifier, .memberTypeIdentifier, .classRestrictionType, .arrayType, .dictionaryType, .metatypeType, .optionalType, .constrainedSugarType, .implicitlyUnwrappedOptionalType, .compositionType, .packExpansionType, .tupleType, .functionType, .attributedType, .namedOpaqueReturnType: return true
+    case .unknownType, .missingType, .simpleTypeIdentifier, .memberTypeIdentifier, .classRestrictionType, .arrayType, .dictionaryType, .metatypeType, .optionalType, .constrainedSugarType, .implicitlyUnwrappedOptionalType, .compositionType, .packExpansionType, .tupleType, .functionType, .attributedType, .namedOpaqueReturnType, .silType: return true
     default: return false
     }
   }
@@ -179,7 +179,7 @@ public struct RawSILSyntax: RawSILSyntaxNodeProtocol {
 
   public static func isKindOf(_ raw: RawSyntax) -> Bool {
     switch raw.kind {
-    case .unknownSIL, .missingSIL, .silStage: return true
+    case .unknownSIL, .missingSIL, .silStage, .silGlobal: return true
     default: return false
     }
   }
@@ -15368,6 +15368,79 @@ public struct RawNamedOpaqueReturnTypeSyntax: RawTypeSyntaxNodeProtocol {
 }
 
 @_spi(RawSyntax)
+public struct RawSILTypeSyntax: RawTypeSyntaxNodeProtocol {
+  var layoutView: RawSyntaxLayoutView {
+    return raw.layoutView!
+  }
+
+  public static func isKindOf(_ raw: RawSyntax) -> Bool {
+    return raw.kind == .silType
+  }
+
+  public var raw: RawSyntax
+  init(raw: RawSyntax) {
+    assert(Self.isKindOf(raw))
+    self.raw = raw
+  }
+
+  public init?<Node: RawSyntaxNodeProtocol>(_ other: Node) {
+    guard Self.isKindOf(other.raw) else { return nil }
+    self.init(raw: other.raw)
+  }
+
+  public init(
+    _ unexpectedBeforeDollarToken: RawUnexpectedNodesSyntax? = nil,
+    dollarToken: RawTokenSyntax,
+    _ unexpectedBetweenDollarTokenAndAddressOnlyStar: RawUnexpectedNodesSyntax? = nil,
+    addressOnlyStar: RawTokenSyntax?,
+    _ unexpectedBetweenAddressOnlyStarAndGenericParameters: RawUnexpectedNodesSyntax? = nil,
+    genericParameters: RawGenericParameterClauseSyntax?,
+    _ unexpectedBetweenGenericParametersAndBaseType: RawUnexpectedNodesSyntax? = nil,
+    baseType: RawTypeSyntax,
+    arena: __shared SyntaxArena
+  ) {
+    let raw = RawSyntax.makeLayout(
+      kind: .silType, uninitializedCount: 8, arena: arena) { layout in
+      layout.initialize(repeating: nil)
+      layout[0] = unexpectedBeforeDollarToken?.raw
+      layout[1] = dollarToken.raw
+      layout[2] = unexpectedBetweenDollarTokenAndAddressOnlyStar?.raw
+      layout[3] = addressOnlyStar?.raw
+      layout[4] = unexpectedBetweenAddressOnlyStarAndGenericParameters?.raw
+      layout[5] = genericParameters?.raw
+      layout[6] = unexpectedBetweenGenericParametersAndBaseType?.raw
+      layout[7] = baseType.raw
+    }
+    self.init(raw: raw)
+  }
+
+  public var unexpectedBeforeDollarToken: RawUnexpectedNodesSyntax? {
+    layoutView.children[0].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var dollarToken: RawTokenSyntax {
+    layoutView.children[1].map(RawTokenSyntax.init(raw:))!
+  }
+  public var unexpectedBetweenDollarTokenAndAddressOnlyStar: RawUnexpectedNodesSyntax? {
+    layoutView.children[2].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var addressOnlyStar: RawTokenSyntax? {
+    layoutView.children[3].map(RawTokenSyntax.init(raw:))
+  }
+  public var unexpectedBetweenAddressOnlyStarAndGenericParameters: RawUnexpectedNodesSyntax? {
+    layoutView.children[4].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var genericParameters: RawGenericParameterClauseSyntax? {
+    layoutView.children[5].map(RawGenericParameterClauseSyntax.init(raw:))
+  }
+  public var unexpectedBetweenGenericParametersAndBaseType: RawUnexpectedNodesSyntax? {
+    layoutView.children[6].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var baseType: RawTypeSyntax {
+    layoutView.children[7].map(RawTypeSyntax.init(raw:))!
+  }
+}
+
+@_spi(RawSyntax)
 public struct RawTypeAnnotationSyntax: RawSyntaxNodeProtocol {
   var layoutView: RawSyntaxLayoutView {
     return raw.layoutView!
@@ -16348,5 +16421,88 @@ public struct RawSILStageSyntax: RawSILSyntaxNodeProtocol {
   }
   public var stageName: RawTokenSyntax {
     layoutView.children[3].map(RawTokenSyntax.init(raw:))!
+  }
+}
+
+@_spi(RawSyntax)
+public struct RawSILGlobalSyntax: RawSILSyntaxNodeProtocol {
+  var layoutView: RawSyntaxLayoutView {
+    return raw.layoutView!
+  }
+
+  public static func isKindOf(_ raw: RawSyntax) -> Bool {
+    return raw.kind == .silGlobal
+  }
+
+  public var raw: RawSyntax
+  init(raw: RawSyntax) {
+    assert(Self.isKindOf(raw))
+    self.raw = raw
+  }
+
+  public init?<Node: RawSyntaxNodeProtocol>(_ other: Node) {
+    guard Self.isKindOf(other.raw) else { return nil }
+    self.init(raw: other.raw)
+  }
+
+  public init(
+    _ unexpectedBeforeSILGlobalToken: RawUnexpectedNodesSyntax? = nil,
+    silGlobalToken: RawTokenSyntax,
+    _ unexpectedBetweenSILGlobalTokenAndLinkage: RawUnexpectedNodesSyntax? = nil,
+    linkage: RawTokenSyntax,
+    _ unexpectedBetweenLinkageAndIdentifier: RawUnexpectedNodesSyntax? = nil,
+    identifier: RawTokenSyntax,
+    _ unexpectedBetweenIdentifierAndColon: RawUnexpectedNodesSyntax? = nil,
+    colon: RawTokenSyntax,
+    _ unexpectedBetweenColonAndSILType: RawUnexpectedNodesSyntax? = nil,
+    silType: RawSILTypeSyntax,
+    arena: __shared SyntaxArena
+  ) {
+    let raw = RawSyntax.makeLayout(
+      kind: .silGlobal, uninitializedCount: 10, arena: arena) { layout in
+      layout.initialize(repeating: nil)
+      layout[0] = unexpectedBeforeSILGlobalToken?.raw
+      layout[1] = silGlobalToken.raw
+      layout[2] = unexpectedBetweenSILGlobalTokenAndLinkage?.raw
+      layout[3] = linkage.raw
+      layout[4] = unexpectedBetweenLinkageAndIdentifier?.raw
+      layout[5] = identifier.raw
+      layout[6] = unexpectedBetweenIdentifierAndColon?.raw
+      layout[7] = colon.raw
+      layout[8] = unexpectedBetweenColonAndSILType?.raw
+      layout[9] = silType.raw
+    }
+    self.init(raw: raw)
+  }
+
+  public var unexpectedBeforeSILGlobalToken: RawUnexpectedNodesSyntax? {
+    layoutView.children[0].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var silGlobalToken: RawTokenSyntax {
+    layoutView.children[1].map(RawTokenSyntax.init(raw:))!
+  }
+  public var unexpectedBetweenSILGlobalTokenAndLinkage: RawUnexpectedNodesSyntax? {
+    layoutView.children[2].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var linkage: RawTokenSyntax {
+    layoutView.children[3].map(RawTokenSyntax.init(raw:))!
+  }
+  public var unexpectedBetweenLinkageAndIdentifier: RawUnexpectedNodesSyntax? {
+    layoutView.children[4].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var identifier: RawTokenSyntax {
+    layoutView.children[5].map(RawTokenSyntax.init(raw:))!
+  }
+  public var unexpectedBetweenIdentifierAndColon: RawUnexpectedNodesSyntax? {
+    layoutView.children[6].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var colon: RawTokenSyntax {
+    layoutView.children[7].map(RawTokenSyntax.init(raw:))!
+  }
+  public var unexpectedBetweenColonAndSILType: RawUnexpectedNodesSyntax? {
+    layoutView.children[8].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var silType: RawSILTypeSyntax {
+    layoutView.children[9].map(RawSILTypeSyntax.init(raw:))!
   }
 }

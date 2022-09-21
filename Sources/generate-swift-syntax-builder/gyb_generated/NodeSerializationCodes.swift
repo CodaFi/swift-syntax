@@ -294,4 +294,6 @@ public let SYNTAX_NODE_SERIALIZATION_CODES: [String: Int] = [
   "UnknownSIL": 281,
   "MissingSIL": 282,
   "SILStage": 283,
+  "SILType": 284,
+  "SILGlobal": 285,
 ]

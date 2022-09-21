@@ -221,3 +221,276 @@ extension SILStageSyntax: CustomReflectable {
   }
 }
 
+// MARK: - SILGlobalSyntax
+
+public struct SILGlobalSyntax: SILSyntaxProtocol, SyntaxHashable {
+  public let _syntaxNode: Syntax
+
+  /// Converts the given `Syntax` node to a `SILGlobalSyntax` if possible. Returns
+  /// `nil` if the conversion is not possible.
+  public init?(_ syntax: Syntax) {
+    guard syntax.raw.kind == .silGlobal else { return nil }
+    self._syntaxNode = syntax
+  }
+
+  /// Creates a `SILGlobalSyntax` node from the given `SyntaxData`. This assumes
+  /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
+  /// is undefined.
+  internal init(_ data: SyntaxData) {
+    assert(data.raw.kind == .silGlobal)
+    self._syntaxNode = Syntax(data)
+  }
+
+  public init(
+    _ unexpectedBeforeSILGlobalToken: UnexpectedNodesSyntax? = nil,
+    silGlobalToken: TokenSyntax,
+    _ unexpectedBetweenSILGlobalTokenAndLinkage: UnexpectedNodesSyntax? = nil,
+    linkage: TokenSyntax,
+    _ unexpectedBetweenLinkageAndIdentifier: UnexpectedNodesSyntax? = nil,
+    identifier: TokenSyntax,
+    _ unexpectedBetweenIdentifierAndColon: UnexpectedNodesSyntax? = nil,
+    colon: TokenSyntax,
+    _ unexpectedBetweenColonAndSILType: UnexpectedNodesSyntax? = nil,
+    silType: SILTypeSyntax
+  ) {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeSILGlobalToken?.raw,
+      silGlobalToken.raw,
+      unexpectedBetweenSILGlobalTokenAndLinkage?.raw,
+      linkage.raw,
+      unexpectedBetweenLinkageAndIdentifier?.raw,
+      identifier.raw,
+      unexpectedBetweenIdentifierAndColon?.raw,
+      colon.raw,
+      unexpectedBetweenColonAndSILType?.raw,
+      silType.raw,
+    ]
+    let raw = RawSyntax.makeLayout(kind: SyntaxKind.silGlobal,
+      from: layout, arena: .default)
+    let data = SyntaxData.forRoot(raw)
+    self.init(data)
+  }
+
+  public var unexpectedBeforeSILGlobalToken: UnexpectedNodesSyntax? {
+    get {
+      let childData = data.child(at: 0, parent: Syntax(self))
+      if childData == nil { return nil }
+      return UnexpectedNodesSyntax(childData!)
+    }
+    set(value) {
+      self = withUnexpectedBeforeSILGlobalToken(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `unexpectedBeforeSILGlobalToken` replaced.
+  /// - param newChild: The new `unexpectedBeforeSILGlobalToken` to replace the node's
+  ///                   current `unexpectedBeforeSILGlobalToken`, if present.
+  public func withUnexpectedBeforeSILGlobalToken(
+    _ newChild: UnexpectedNodesSyntax?) -> SILGlobalSyntax {
+    let raw = newChild?.raw
+    let newData = data.replacingChild(raw, at: 0)
+    return SILGlobalSyntax(newData)
+  }
+
+  public var silGlobalToken: TokenSyntax {
+    get {
+      let childData = data.child(at: 1, parent: Syntax(self))
+      return TokenSyntax(childData!)
+    }
+    set(value) {
+      self = withSILGlobalToken(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `silGlobalToken` replaced.
+  /// - param newChild: The new `silGlobalToken` to replace the node's
+  ///                   current `silGlobalToken`, if present.
+  public func withSILGlobalToken(
+    _ newChild: TokenSyntax?) -> SILGlobalSyntax {
+    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.unknown(""), arena: .default)
+    let newData = data.replacingChild(raw, at: 1)
+    return SILGlobalSyntax(newData)
+  }
+
+  public var unexpectedBetweenSILGlobalTokenAndLinkage: UnexpectedNodesSyntax? {
+    get {
+      let childData = data.child(at: 2, parent: Syntax(self))
+      if childData == nil { return nil }
+      return UnexpectedNodesSyntax(childData!)
+    }
+    set(value) {
+      self = withUnexpectedBetweenSILGlobalTokenAndLinkage(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `unexpectedBetweenSILGlobalTokenAndLinkage` replaced.
+  /// - param newChild: The new `unexpectedBetweenSILGlobalTokenAndLinkage` to replace the node's
+  ///                   current `unexpectedBetweenSILGlobalTokenAndLinkage`, if present.
+  public func withUnexpectedBetweenSILGlobalTokenAndLinkage(
+    _ newChild: UnexpectedNodesSyntax?) -> SILGlobalSyntax {
+    let raw = newChild?.raw
+    let newData = data.replacingChild(raw, at: 2)
+    return SILGlobalSyntax(newData)
+  }
+
+  public var linkage: TokenSyntax {
+    get {
+      let childData = data.child(at: 3, parent: Syntax(self))
+      return TokenSyntax(childData!)
+    }
+    set(value) {
+      self = withLinkage(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `linkage` replaced.
+  /// - param newChild: The new `linkage` to replace the node's
+  ///                   current `linkage`, if present.
+  public func withLinkage(
+    _ newChild: TokenSyntax?) -> SILGlobalSyntax {
+    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.unknown(""), arena: .default)
+    let newData = data.replacingChild(raw, at: 3)
+    return SILGlobalSyntax(newData)
+  }
+
+  public var unexpectedBetweenLinkageAndIdentifier: UnexpectedNodesSyntax? {
+    get {
+      let childData = data.child(at: 4, parent: Syntax(self))
+      if childData == nil { return nil }
+      return UnexpectedNodesSyntax(childData!)
+    }
+    set(value) {
+      self = withUnexpectedBetweenLinkageAndIdentifier(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `unexpectedBetweenLinkageAndIdentifier` replaced.
+  /// - param newChild: The new `unexpectedBetweenLinkageAndIdentifier` to replace the node's
+  ///                   current `unexpectedBetweenLinkageAndIdentifier`, if present.
+  public func withUnexpectedBetweenLinkageAndIdentifier(
+    _ newChild: UnexpectedNodesSyntax?) -> SILGlobalSyntax {
+    let raw = newChild?.raw
+    let newData = data.replacingChild(raw, at: 4)
+    return SILGlobalSyntax(newData)
+  }
+
+  public var identifier: TokenSyntax {
+    get {
+      let childData = data.child(at: 5, parent: Syntax(self))
+      return TokenSyntax(childData!)
+    }
+    set(value) {
+      self = withIdentifier(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `identifier` replaced.
+  /// - param newChild: The new `identifier` to replace the node's
+  ///                   current `identifier`, if present.
+  public func withIdentifier(
+    _ newChild: TokenSyntax?) -> SILGlobalSyntax {
+    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: .default)
+    let newData = data.replacingChild(raw, at: 5)
+    return SILGlobalSyntax(newData)
+  }
+
+  public var unexpectedBetweenIdentifierAndColon: UnexpectedNodesSyntax? {
+    get {
+      let childData = data.child(at: 6, parent: Syntax(self))
+      if childData == nil { return nil }
+      return UnexpectedNodesSyntax(childData!)
+    }
+    set(value) {
+      self = withUnexpectedBetweenIdentifierAndColon(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `unexpectedBetweenIdentifierAndColon` replaced.
+  /// - param newChild: The new `unexpectedBetweenIdentifierAndColon` to replace the node's
+  ///                   current `unexpectedBetweenIdentifierAndColon`, if present.
+  public func withUnexpectedBetweenIdentifierAndColon(
+    _ newChild: UnexpectedNodesSyntax?) -> SILGlobalSyntax {
+    let raw = newChild?.raw
+    let newData = data.replacingChild(raw, at: 6)
+    return SILGlobalSyntax(newData)
+  }
+
+  public var colon: TokenSyntax {
+    get {
+      let childData = data.child(at: 7, parent: Syntax(self))
+      return TokenSyntax(childData!)
+    }
+    set(value) {
+      self = withColon(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `colon` replaced.
+  /// - param newChild: The new `colon` to replace the node's
+  ///                   current `colon`, if present.
+  public func withColon(
+    _ newChild: TokenSyntax?) -> SILGlobalSyntax {
+    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: .default)
+    let newData = data.replacingChild(raw, at: 7)
+    return SILGlobalSyntax(newData)
+  }
+
+  public var unexpectedBetweenColonAndSILType: UnexpectedNodesSyntax? {
+    get {
+      let childData = data.child(at: 8, parent: Syntax(self))
+      if childData == nil { return nil }
+      return UnexpectedNodesSyntax(childData!)
+    }
+    set(value) {
+      self = withUnexpectedBetweenColonAndSILType(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndSILType` replaced.
+  /// - param newChild: The new `unexpectedBetweenColonAndSILType` to replace the node's
+  ///                   current `unexpectedBetweenColonAndSILType`, if present.
+  public func withUnexpectedBetweenColonAndSILType(
+    _ newChild: UnexpectedNodesSyntax?) -> SILGlobalSyntax {
+    let raw = newChild?.raw
+    let newData = data.replacingChild(raw, at: 8)
+    return SILGlobalSyntax(newData)
+  }
+
+  public var silType: SILTypeSyntax {
+    get {
+      let childData = data.child(at: 9, parent: Syntax(self))
+      return SILTypeSyntax(childData!)
+    }
+    set(value) {
+      self = withSILType(value)
+    }
+  }
+
+  /// Returns a copy of the receiver with its `silType` replaced.
+  /// - param newChild: The new `silType` to replace the node's
+  ///                   current `silType`, if present.
+  public func withSILType(
+    _ newChild: SILTypeSyntax?) -> SILGlobalSyntax {
+    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.silType, arena: .default)
+    let newData = data.replacingChild(raw, at: 9)
+    return SILGlobalSyntax(newData)
+  }
+}
+
+extension SILGlobalSyntax: CustomReflectable {
+  public var customMirror: Mirror {
+    return Mirror(self, children: [
+      "unexpectedBeforeSILGlobalToken": unexpectedBeforeSILGlobalToken.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "silGlobalToken": Syntax(silGlobalToken).asProtocol(SyntaxProtocol.self),
+      "unexpectedBetweenSILGlobalTokenAndLinkage": unexpectedBetweenSILGlobalTokenAndLinkage.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "linkage": Syntax(linkage).asProtocol(SyntaxProtocol.self),
+      "unexpectedBetweenLinkageAndIdentifier": unexpectedBetweenLinkageAndIdentifier.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "identifier": Syntax(identifier).asProtocol(SyntaxProtocol.self),
+      "unexpectedBetweenIdentifierAndColon": unexpectedBetweenIdentifierAndColon.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "colon": Syntax(colon).asProtocol(SyntaxProtocol.self),
+      "unexpectedBetweenColonAndSILType": unexpectedBetweenColonAndSILType.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "silType": Syntax(silType).asProtocol(SyntaxProtocol.self),
+    ])
+  }
+}
+

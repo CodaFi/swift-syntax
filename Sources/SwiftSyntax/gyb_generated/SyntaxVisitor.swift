@@ -2591,6 +2591,16 @@ open class SyntaxVisitor {
   /// The function called after visiting `NamedOpaqueReturnTypeSyntax` and its descendents.
   ///   - node: the node we just finished visiting.
   open func visitPost(_ node: NamedOpaqueReturnTypeSyntax) {}
+  /// Visiting `SILTypeSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: how should we continue visiting.
+  open func visit(_ node: SILTypeSyntax) -> SyntaxVisitorContinueKind {
+    return .visitChildren
+  }
+
+  /// The function called after visiting `SILTypeSyntax` and its descendents.
+  ///   - node: the node we just finished visiting.
+  open func visitPost(_ node: SILTypeSyntax) {}
   /// Visiting `TypeAnnotationSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: how should we continue visiting.
@@ -2771,6 +2781,16 @@ open class SyntaxVisitor {
   /// The function called after visiting `SILStageSyntax` and its descendents.
   ///   - node: the node we just finished visiting.
   open func visitPost(_ node: SILStageSyntax) {}
+  /// Visiting `SILGlobalSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: how should we continue visiting.
+  open func visit(_ node: SILGlobalSyntax) -> SyntaxVisitorContinueKind {
+    return .visitChildren
+  }
+
+  /// The function called after visiting `SILGlobalSyntax` and its descendents.
+  ///   - node: the node we just finished visiting.
+  open func visitPost(_ node: SILGlobalSyntax) {}
 
   /// Visiting `TokenSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
@@ -5666,6 +5686,17 @@ open class SyntaxVisitor {
   }
 
   /// Implementation detail of doVisit(_:_:). Do not call directly.
+  private func visitImplSILTypeSyntax(_ data: SyntaxData) {
+      let node = SILTypeSyntax(data)
+      let needsChildren = (visit(node) == .visitChildren)
+      // Avoid calling into visitChildren if possible.
+      if needsChildren && !node.raw.layoutView!.children.isEmpty {
+        visitChildren(node)
+      }
+      visitPost(node)
+  }
+
+  /// Implementation detail of doVisit(_:_:). Do not call directly.
   private func visitImplTypeAnnotationSyntax(_ data: SyntaxData) {
       let node = TypeAnnotationSyntax(data)
       let needsChildren = (visit(node) == .visitChildren)
@@ -5855,6 +5886,17 @@ open class SyntaxVisitor {
   /// Implementation detail of doVisit(_:_:). Do not call directly.
   private func visitImplSILStageSyntax(_ data: SyntaxData) {
       let node = SILStageSyntax(data)
+      let needsChildren = (visit(node) == .visitChildren)
+      // Avoid calling into visitChildren if possible.
+      if needsChildren && !node.raw.layoutView!.children.isEmpty {
+        visitChildren(node)
+      }
+      visitPost(node)
+  }
+
+  /// Implementation detail of doVisit(_:_:). Do not call directly.
+  private func visitImplSILGlobalSyntax(_ data: SyntaxData) {
+      let node = SILGlobalSyntax(data)
       let needsChildren = (visit(node) == .visitChildren)
       // Avoid calling into visitChildren if possible.
       if needsChildren && !node.raw.layoutView!.children.isEmpty {
@@ -6393,6 +6435,8 @@ open class SyntaxVisitor {
       visitImplGenericArgumentClauseSyntax(data)
     case .namedOpaqueReturnType:
       visitImplNamedOpaqueReturnTypeSyntax(data)
+    case .silType:
+      visitImplSILTypeSyntax(data)
     case .typeAnnotation:
       visitImplTypeAnnotationSyntax(data)
     case .enumCasePattern:
@@ -6429,6 +6473,8 @@ open class SyntaxVisitor {
       visitImplVersionTupleSyntax(data)
     case .silStage:
       visitImplSILStageSyntax(data)
+    case .silGlobal:
+      visitImplSILGlobalSyntax(data)
     }
   }
 

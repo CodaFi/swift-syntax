@@ -232,4 +232,24 @@ TYPE_NODES = [
              Child('GenericParameters', kind='GenericParameterClause'),
              Child('BaseType', kind='Type'),
          ]),
+
+    # sil-type -> '$' '*'? generic-parameter-list? type
+    Node('SILType', name_for_diagnostics='SIL type', kind='Type',
+         children=[
+             Child('DollarToken', kind='Token'),
+             Child('AddressOnlyStar', kind='Token', is_optional=True),
+             Child('GenericParameters', kind='GenericParameterClause',
+                   is_optional=True),
+             Child('BaseType', kind='Type'),
+         ]),
+
+    # sil-box-type -> '{'  '}'
+    Node('SILType', name_for_diagnostics='SIL type', kind='Type',
+         children=[
+             Child('DollarToken', kind='Token'),
+             Child('AddressOnlyStar', kind='Token', is_optional=True),
+             Child('GenericParameters', kind='GenericParameterClause',
+                   is_optional=True),
+             Child('BaseType', kind='Type'),
+         ]),
 ]

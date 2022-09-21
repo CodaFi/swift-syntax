@@ -272,6 +272,7 @@ public enum SyntaxKind {
   case genericArgument
   case genericArgumentClause
   case namedOpaqueReturnType
+  case silType
   case typeAnnotation
   case enumCasePattern
   case isTypePattern
@@ -290,6 +291,7 @@ public enum SyntaxKind {
   case availabilityVersionRestriction
   case versionTuple
   case silStage
+  case silGlobal
 
   var isSyntaxCollection: Bool {
     switch self {

@@ -285,6 +285,8 @@ SYNTAX_NODE_SERIALIZATION_CODES = {
     'UnknownSIL': 281,
     'MissingSIL': 282,
     'SILStage': 283,
+    'SILType': 284,
+    'SILGlobal': 285,
 }
 
 

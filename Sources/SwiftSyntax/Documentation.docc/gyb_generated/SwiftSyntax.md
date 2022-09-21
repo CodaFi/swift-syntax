@@ -178,6 +178,7 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/FunctionTypeSyntax>
 - <doc:SwiftSyntax/AttributedTypeSyntax>
 - <doc:SwiftSyntax/NamedOpaqueReturnTypeSyntax>
+- <doc:SwiftSyntax/SILTypeSyntax>
 
 ### Patterns
 

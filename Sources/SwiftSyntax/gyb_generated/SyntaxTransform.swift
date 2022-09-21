@@ -1040,6 +1040,10 @@ public protocol SyntaxTransformVisitor {
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
   func visit(_ node: NamedOpaqueReturnTypeSyntax) -> ResultType
+  /// Visiting `SILTypeSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: the sum of whatever the child visitors return.
+  func visit(_ node: SILTypeSyntax) -> ResultType
   /// Visiting `TypeAnnotationSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
@@ -1112,6 +1116,10 @@ public protocol SyntaxTransformVisitor {
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
   func visit(_ node: SILStageSyntax) -> ResultType
+  /// Visiting `SILGlobalSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: the sum of whatever the child visitors return.
+  func visit(_ node: SILGlobalSyntax) -> ResultType
 }
 
 extension SyntaxTransformVisitor {
@@ -2653,6 +2661,12 @@ extension SyntaxTransformVisitor {
   public func visit(_ node: NamedOpaqueReturnTypeSyntax) -> ResultType {
     visitAny(Syntax(node))
   }
+  /// Visiting `SILTypeSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: nil by default.
+  public func visit(_ node: SILTypeSyntax) -> ResultType {
+    visitAny(Syntax(node))
+  }
   /// Visiting `TypeAnnotationSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: nil by default.
@@ -2759,6 +2773,12 @@ extension SyntaxTransformVisitor {
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: nil by default.
   public func visit(_ node: SILStageSyntax) -> ResultType {
+    visitAny(Syntax(node))
+  }
+  /// Visiting `SILGlobalSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: nil by default.
+  public func visit(_ node: SILGlobalSyntax) -> ResultType {
     visitAny(Syntax(node))
   }
 
@@ -3278,6 +3298,8 @@ extension SyntaxTransformVisitor {
       return visit(derived)
     case .namedOpaqueReturnType(let derived):
       return visit(derived)
+    case .silType(let derived):
+      return visit(derived)
     case .typeAnnotation(let derived):
       return visit(derived)
     case .enumCasePattern(let derived):
@@ -3313,6 +3335,8 @@ extension SyntaxTransformVisitor {
     case .versionTuple(let derived):
       return visit(derived)
     case .silStage(let derived):
+      return visit(derived)
+    case .silGlobal(let derived):
       return visit(derived)
     }
   }

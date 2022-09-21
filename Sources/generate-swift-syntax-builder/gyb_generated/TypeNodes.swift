@@ -409,4 +409,20 @@ let TYPE_NODES: [Node] = [
                kind: "Type")
        ]),
   
+  Node(name: "SILType",
+       nameForDiagnostics: "SIL type",
+       kind: "Type",
+       children: [
+         Child(name: "DollarToken",
+               kind: "Token"),
+         Child(name: "AddressOnlyStar",
+               kind: "Token",
+               isOptional: true),
+         Child(name: "GenericParameters",
+               kind: "GenericParameterClause",
+               isOptional: true),
+         Child(name: "BaseType",
+               kind: "Type")
+       ]),
+  
 ]

@@ -1808,6 +1808,13 @@ open class SyntaxRewriter {
     return TypeSyntax(visitChildren(node))
   }
 
+  /// Visit a `SILTypeSyntax`.
+  ///   - Parameter node: the node that is being visited
+  ///   - Returns: the rewritten node
+  open func visit(_ node: SILTypeSyntax) -> TypeSyntax {
+    return TypeSyntax(visitChildren(node))
+  }
+
   /// Visit a `TypeAnnotationSyntax`.
   ///   - Parameter node: the node that is being visited
   ///   - Returns: the rewritten node
@@ -1931,6 +1938,13 @@ open class SyntaxRewriter {
   ///   - Parameter node: the node that is being visited
   ///   - Returns: the rewritten node
   open func visit(_ node: SILStageSyntax) -> SILSyntax {
+    return SILSyntax(visitChildren(node))
+  }
+
+  /// Visit a `SILGlobalSyntax`.
+  ///   - Parameter node: the node that is being visited
+  ///   - Returns: the rewritten node
+  open func visit(_ node: SILGlobalSyntax) -> SILSyntax {
     return SILSyntax(visitChildren(node))
   }
 
@@ -4586,6 +4600,16 @@ open class SyntaxRewriter {
   }
 
   /// Implementation detail of visit(_:). Do not call directly.
+  private func visitImplSILTypeSyntax(_ data: SyntaxData) -> Syntax {
+      let node = SILTypeSyntax(data)
+      // Accessing _syntaxNode directly is faster than calling Syntax(node)
+      visitPre(node._syntaxNode)
+      defer { visitPost(node._syntaxNode) }
+      if let newNode = visitAny(node._syntaxNode) { return newNode }
+      return Syntax(visit(node))
+  }
+
+  /// Implementation detail of visit(_:). Do not call directly.
   private func visitImplTypeAnnotationSyntax(_ data: SyntaxData) -> Syntax {
       let node = TypeAnnotationSyntax(data)
       // Accessing _syntaxNode directly is faster than calling Syntax(node)
@@ -4758,6 +4782,16 @@ open class SyntaxRewriter {
   /// Implementation detail of visit(_:). Do not call directly.
   private func visitImplSILStageSyntax(_ data: SyntaxData) -> Syntax {
       let node = SILStageSyntax(data)
+      // Accessing _syntaxNode directly is faster than calling Syntax(node)
+      visitPre(node._syntaxNode)
+      defer { visitPost(node._syntaxNode) }
+      if let newNode = visitAny(node._syntaxNode) { return newNode }
+      return Syntax(visit(node))
+  }
+
+  /// Implementation detail of visit(_:). Do not call directly.
+  private func visitImplSILGlobalSyntax(_ data: SyntaxData) -> Syntax {
+      let node = SILGlobalSyntax(data)
       // Accessing _syntaxNode directly is faster than calling Syntax(node)
       visitPre(node._syntaxNode)
       defer { visitPost(node._syntaxNode) }
@@ -5327,6 +5361,8 @@ open class SyntaxRewriter {
       return visitImplGenericArgumentClauseSyntax
     case .namedOpaqueReturnType:
       return visitImplNamedOpaqueReturnTypeSyntax
+    case .silType:
+      return visitImplSILTypeSyntax
     case .typeAnnotation:
       return visitImplTypeAnnotationSyntax
     case .enumCasePattern:
@@ -5363,6 +5399,8 @@ open class SyntaxRewriter {
       return visitImplVersionTupleSyntax
     case .silStage:
       return visitImplSILStageSyntax
+    case .silGlobal:
+      return visitImplSILGlobalSyntax
     }
   }
 
@@ -5888,6 +5926,8 @@ open class SyntaxRewriter {
       return visitImplGenericArgumentClauseSyntax(data)
     case .namedOpaqueReturnType:
       return visitImplNamedOpaqueReturnTypeSyntax(data)
+    case .silType:
+      return visitImplSILTypeSyntax(data)
     case .typeAnnotation:
       return visitImplTypeAnnotationSyntax(data)
     case .enumCasePattern:
@@ -5924,6 +5964,8 @@ open class SyntaxRewriter {
       return visitImplVersionTupleSyntax(data)
     case .silStage:
       return visitImplSILStageSyntax(data)
+    case .silGlobal:
+      return visitImplSILGlobalSyntax(data)
     }
   }
 

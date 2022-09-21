@@ -49,7 +49,7 @@ extension Parser {
     case .sil_vtable:
       fatalError()
     case .sil_global:
-      fatalError()
+      return RawSILSyntax(self.parseSILGlobal())
     case .sil_witness_table:
       fatalError()
     case .sil_default_witness_table:
@@ -75,6 +75,58 @@ extension Parser {
       stageName: stageName,
       arena: self.arena)
   }
+}
 
+extension Parser {
+  mutating func parseSILGlobal() -> RawSILGlobalSyntax {
+    let (unexpectedBeforeKeyword, keyword) = self.expectContextualKeyword("sil_stage")
+    let (unexpectedBeforeLinkage, linkage) = self.expectIdentifier()
+    let (unexpectedBeforeIdentifier, identifier) = self.expectIdentifier()
+    let (unexpectedBeforeColon, colon) = self.expect(.colon)
+    let type = self.parseSILType()
+    return RawSILGlobalSyntax(
+      unexpectedBeforeKeyword,
+      silGlobalToken: keyword,
+      unexpectedBeforeLinkage,
+      linkage: linkage,
+      unexpectedBeforeIdentifier,
+      identifier: identifier,
+      unexpectedBeforeColon,
+      colon: colon,
+      silType: type,
+      arena: self.arena)
+  }
+}
 
+extension Parser {
+  mutating func parseSILType() -> RawSILTypeSyntax {
+    let dollar = self.consumePrefix("$", as: .dollarIdentifier)
+    let addressOnlyStar = self.consumeIfContextualPunctuator("*")
+    let (specifier, attrList) = self.parseTypeAttributeList()
+
+    let generics: RawGenericParameterClauseSyntax?
+    if self.currentToken.starts(with: "<") {
+      generics = self.parseGenericParameters()
+    } else {
+      generics = nil
+    }
+
+    let type: RawTypeSyntax
+    if self.at(.leftBrace) {
+      type = RawTypeSyntax(self.parseSILBoxType())
+    } else {
+      type = self.parseTypeScalar(.sil, specifier, attrList)
+    }
+
+    return RawSILTypeSyntax(
+      dollarToken: dollar,
+      addressOnlyStar: addressOnlyStar,
+      genericParameters: generics,
+      baseType: type,
+      arena: self.arena)
+  }
+
+  mutating func parseSILBoxType() -> RawSILBoxTypeSyntax {
+    
+  }
 }

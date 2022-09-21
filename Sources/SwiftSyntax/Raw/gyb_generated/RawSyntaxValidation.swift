@@ -2198,6 +2198,17 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
     _verify(layout[2], as: RawUnexpectedNodesSyntax?.self)
     _verify(layout[3], as: RawTypeSyntax.self)
     break
+  case .silType:
+    assert(layout.count == 8)
+    _verify(layout[0], as: RawUnexpectedNodesSyntax?.self)
+    _verify(layout[1], as: RawTokenSyntax.self)
+    _verify(layout[2], as: RawUnexpectedNodesSyntax?.self)
+    _verify(layout[3], as: RawTokenSyntax?.self)
+    _verify(layout[4], as: RawUnexpectedNodesSyntax?.self)
+    _verify(layout[5], as: RawGenericParameterClauseSyntax?.self)
+    _verify(layout[6], as: RawUnexpectedNodesSyntax?.self)
+    _verify(layout[7], as: RawTypeSyntax.self)
+    break
   case .typeAnnotation:
     assert(layout.count == 4)
     _verify(layout[0], as: RawUnexpectedNodesSyntax?.self)
@@ -2331,6 +2342,19 @@ func validateLayout(layout: RawSyntaxBuffer, as kind: SyntaxKind) {
     _verify(layout[1], as: RawTokenSyntax.self)
     _verify(layout[2], as: RawUnexpectedNodesSyntax?.self)
     _verify(layout[3], as: RawTokenSyntax.self)
+    break
+  case .silGlobal:
+    assert(layout.count == 10)
+    _verify(layout[0], as: RawUnexpectedNodesSyntax?.self)
+    _verify(layout[1], as: RawTokenSyntax.self)
+    _verify(layout[2], as: RawUnexpectedNodesSyntax?.self)
+    _verify(layout[3], as: RawTokenSyntax.self)
+    _verify(layout[4], as: RawUnexpectedNodesSyntax?.self)
+    _verify(layout[5], as: RawTokenSyntax.self)
+    _verify(layout[6], as: RawUnexpectedNodesSyntax?.self)
+    _verify(layout[7], as: RawTokenSyntax.self)
+    _verify(layout[8], as: RawUnexpectedNodesSyntax?.self)
+    _verify(layout[9], as: RawSILTypeSyntax.self)
     break
   }
 #endif

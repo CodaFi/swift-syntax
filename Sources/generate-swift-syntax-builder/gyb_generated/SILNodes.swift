@@ -26,4 +26,35 @@ let SIL_NODES: [Node] = [
                ])
        ]),
 
+  Node(name: "SILGlobal",
+       nameForDiagnostics: "SIL global",
+       kind: "SIL",
+       children: [
+         Child(name: "SILGlobalToken",
+               kind: "Token"),
+         Child(name: "Linkage",
+               kind: "Token",
+               textChoices: [
+                 "public",
+                 "hidden",
+                 "shared",
+                 "private",
+                 "public_external",
+                 "hidden_external",
+                 "non_abi"
+               ]),
+         Child(name: "Identifier",
+               kind: "IdentifierToken",
+               tokenChoices: [
+                 "Identifier"
+               ]),
+         Child(name: "Colon",
+               kind: "ColonToken",
+               tokenChoices: [
+                 "Colon"
+               ]),
+         Child(name: "SILType",
+               kind: "SILType")
+       ]),
+
 ]

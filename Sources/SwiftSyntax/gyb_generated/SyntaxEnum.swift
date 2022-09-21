@@ -271,6 +271,7 @@ public enum SyntaxEnum {
   case genericArgument(GenericArgumentSyntax)
   case genericArgumentClause(GenericArgumentClauseSyntax)
   case namedOpaqueReturnType(NamedOpaqueReturnTypeSyntax)
+  case silType(SILTypeSyntax)
   case typeAnnotation(TypeAnnotationSyntax)
   case enumCasePattern(EnumCasePatternSyntax)
   case isTypePattern(IsTypePatternSyntax)
@@ -289,6 +290,7 @@ public enum SyntaxEnum {
   case availabilityVersionRestriction(AvailabilityVersionRestrictionSyntax)
   case versionTuple(VersionTupleSyntax)
   case silStage(SILStageSyntax)
+  case silGlobal(SILGlobalSyntax)
 
   public var nameForDiagnostics: String? {
     switch self {
@@ -806,6 +808,8 @@ public enum SyntaxEnum {
       return "generic argument clause"
     case .namedOpaqueReturnType:
       return "named opaque return type"
+    case .silType:
+      return "SIL type"
     case .typeAnnotation:
       return "type annotation"
     case .enumCasePattern:
@@ -842,6 +846,8 @@ public enum SyntaxEnum {
       return "version tuple"
     case .silStage:
       return "SIL stage"
+    case .silGlobal:
+      return "SIL global"
     }
   }
 }
@@ -1364,6 +1370,8 @@ public extension Syntax {
       return .genericArgumentClause(GenericArgumentClauseSyntax(self)!)
     case .namedOpaqueReturnType:
       return .namedOpaqueReturnType(NamedOpaqueReturnTypeSyntax(self)!)
+    case .silType:
+      return .silType(SILTypeSyntax(self)!)
     case .typeAnnotation:
       return .typeAnnotation(TypeAnnotationSyntax(self)!)
     case .enumCasePattern:
@@ -1400,6 +1408,8 @@ public extension Syntax {
       return .versionTuple(VersionTupleSyntax(self)!)
     case .silStage:
       return .silStage(SILStageSyntax(self)!)
+    case .silGlobal:
+      return .silGlobal(SILGlobalSyntax(self)!)
     }
   }
 }
