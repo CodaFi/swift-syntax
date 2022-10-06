@@ -691,17 +691,45 @@ public class LexerTests: XCTestCase {
     }
   }
 
-  func testIntegerLiteralDiagnostics() {
+  func testNumericLiteralDiagnostics() {
     AssertParse(
       """
       var fl_l: Float = 0x1.0#^MISSING_HEX_EXPONENT_END^#
 
       var fl_bad_separator2: Double = 0x1p#^BAD_HEX_EXPONENT_START^#_
+
+      var invalid_num_literal: Int64 = 0#^BAD_DECIMAL_DIGIT^#QWERTY
+      var invalid_bin_literal: Int64 = 0b#^BAD_BINARY_DIGIT^#QWERTY
+      var invalid_hex_literal: Int64 = 0x#^BAD_HEX_DIGIT^#QWERTY
+      var invalid_oct_literal: Int64 = 0o#^BAD_OCTAL_DIGIT^#QWERTY
+
+      var invalid_exp_literal: Double = 1.0e+#^BAD_FLOAT_EXPONENT_DIGIT_P^#QWERTY
+      var invalid_fp_exp_literal: Double = 0x1p+#^BAD_FLOAT_EXPONENT_DIGIT_E^#QWERTY
+
+      var invalid_num_literal_prefix: Int64 = 0#^BAD_DECIMAL_DIGIT_a^#a1234567
+      var invalid_num_literal_middle: Int64 = 0123#^BAD_DECIMAL_DIGIT_A^#A5678
+      var invalid_bin_literal_middle: Int64 = 0b10#^BAD_BINARY_DIGIT_2^#20101
+      var invalid_oct_literal_middle: Int64 = 0o1357#^BAD_OCTAL_DIGIT_8^#864
+      var invalid_hex_literal_middle: Int64 = 0x147AD#^BAD_HEX_DIGIT_G^#G0
       """,
     diagnostics: [
       DiagnosticSpec(locationMarker: "MISSING_HEX_EXPONENT_END", message: "hexadecimal floating point literal must end with an exponent"),
 
       DiagnosticSpec(locationMarker: "BAD_HEX_EXPONENT_START", message: "'_' is not a valid first character in floating point exponent"),
+
+      DiagnosticSpec(locationMarker: "BAD_DECIMAL_DIGIT", message: "'Q' is not a valid digit in integer literal"),
+      DiagnosticSpec(locationMarker: "BAD_BINARY_DIGIT", message: "'Q' is not a valid binary digit (0 or 1) in integer literal"),
+      DiagnosticSpec(locationMarker: "BAD_HEX_DIGIT", message: "'Q' is not a valid hexadecimal digit (0-9, A-F) in integer literal"),
+      DiagnosticSpec(locationMarker: "BAD_OCTAL_DIGIT", message: "'Q' is not a valid octal digit (0-7) in integer literal"),
+
+      DiagnosticSpec(locationMarker: "BAD_FLOAT_EXPONENT_DIGIT_P", message: "'Q' is not a valid digit in floating point exponent"),
+      DiagnosticSpec(locationMarker: "BAD_FLOAT_EXPONENT_DIGIT_E", message: "'Q' is not a valid digit in floating point exponent"),
+
+      DiagnosticSpec(locationMarker: "BAD_DECIMAL_DIGIT_a", message: "'a' is not a valid digit in integer literal"),
+      DiagnosticSpec(locationMarker: "BAD_DECIMAL_DIGIT_A", message: "'A' is not a valid digit in integer literal"),
+      DiagnosticSpec(locationMarker: "BAD_BINARY_DIGIT_2", message: "'2' is not a valid binary digit (0 or 1) in integer literal"),
+      DiagnosticSpec(locationMarker: "BAD_OCTAL_DIGIT_8", message: "'8' is not a valid octal digit (0-7) in integer literal"),
+      DiagnosticSpec(locationMarker: "BAD_HEX_DIGIT_G", message: "'G' is not a valid hexadecimal digit (0-9, A-F) in integer literal"),
     ])
   }
 }

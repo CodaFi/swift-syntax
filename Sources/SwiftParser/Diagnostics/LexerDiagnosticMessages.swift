@@ -99,7 +99,7 @@ public struct InvalidDigitInIntegerliteral: LexerError {
   public enum Kind {
     case binary(Unicode.Scalar)
     case octal(Unicode.Scalar)
-    case dectal(Unicode.Scalar)
+    case decimal(Unicode.Scalar)
     case hex(Unicode.Scalar)
   }
 
@@ -108,10 +108,10 @@ public struct InvalidDigitInIntegerliteral: LexerError {
   public var message: String {
     switch self.kind {
     case .binary(let digit):
-      return "'\(digit)' is not a validbinary digit (0 or 1) in integer literal"
+      return "'\(digit)' is not a valid binary digit (0 or 1) in integer literal"
     case .octal(let digit):
       return "'\(digit)' is not a valid octal digit (0-7) in integer literal"
-    case .dectal(let digit):
+    case .decimal(let digit):
       return "'\(digit)' is not a valid digit in integer literal"
     case .hex(let digit):
       return "'\(digit)' is not a valid hexadecimal digit (0-9, A-F) in integer literal"

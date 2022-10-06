@@ -1307,15 +1307,6 @@ extension Lexer.Cursor {
     assert((Unicode.Scalar(self.previous).isDigit || self.previous == UInt8(ascii: ".")),
            "Unexpected start")
 
-//    let expected_int_digit = { (loc: Lexer.Cursor, kind: ExpectedDigitKind) -> TokenKind in
-//      diagnose(loc, diag::lex_invalid_digit_in_int_literal, StringRef(loc, 1),
-//               (unsigned)kind)
-//      loc.advance(while: { $0.isValidIdentifierContinuationCodePoint })
-//      return .unknown(TokStart.adoptRange(upTo: loc) { stringBuf in
-//        String(decoding: stringBuf, as: UTF8.self)
-//      })
-//    }
-
     if !self.isAtEndOfFile && self.previous == UInt8(ascii: "0") && self.peek() == UInt8(ascii: "x") {
       return self.lexHexNumber(TokStart, diagnosticHandler)
     }
@@ -1324,20 +1315,20 @@ extension Lexer.Cursor {
       // 0o[0-7][0-7_]*
       _ = self.advance()
       if !self.isAtEndOfFile, self.peek() < UInt8(ascii: "0") || self.peek() > UInt8(ascii: "7") {
-//        return expected_int_digit(self, .octal)
+        diagnosticHandler?(TokStart.distance(to: self), InvalidDigitInIntegerliteral(kind: .octal(Unicode.Scalar(self.peek()))))
         self.advance(while: { $0.isValidIdentifierContinuationCodePoint })
-        return (.unknown, [])
+        return (.integerLiteral, [ .isErroneous ])
       }
 
       self.advance(while: {
         ($0 >= Unicode.Scalar("0") && $0 <= Unicode.Scalar("7")) || $0 == Unicode.Scalar("_")
       })
 
-//      let tmp = self
+      let tmp = self
       if self.advance(if: { $0.isValidIdentifierContinuationCodePoint }) {
-//        return expected_int_digit(tmp, .octal)
+        diagnosticHandler?(TokStart.distance(to: tmp), InvalidDigitInIntegerliteral(kind: .octal(Unicode.Scalar(tmp.peek()))))
         self.advance(while: { $0.isValidIdentifierContinuationCodePoint })
-        return (.unknown, [])
+        return (.integerLiteral, [ .isErroneous ])
       }
 
       return (.integerLiteral, [])
@@ -1347,20 +1338,20 @@ extension Lexer.Cursor {
       // 0b[01][01_]*
       _ = self.advance()
       if !self.isAtEndOfFile, self.peek() != UInt8(ascii: "0") && self.peek() != UInt8(ascii: "1") {
-//        return expected_int_digit(self, .binary)
+        diagnosticHandler?(TokStart.distance(to: self), InvalidDigitInIntegerliteral(kind: .binary(Unicode.Scalar(self.peek()))))
         self.advance(while: { $0.isValidIdentifierContinuationCodePoint })
-        return (.unknown, [])
+        return (.integerLiteral, [ .isErroneous ])
       }
 
       self.advance(while: {
         $0 == Unicode.Scalar("0") || $0 == Unicode.Scalar("1") || $0 == Unicode.Scalar("_")
       })
 
-//      let tmp = self
+      let tmp = self
       if self.advance(if: { $0.isValidIdentifierContinuationCodePoint }) {
-//        return expected_int_digit(tmp, .binary)
+        diagnosticHandler?(TokStart.distance(to: tmp), InvalidDigitInIntegerliteral(kind: .binary(Unicode.Scalar(tmp.peek()))))
         self.advance(while: { $0.isValidIdentifierContinuationCodePoint })
-        return (.unknown, [])
+        return (.integerLiteral, [ .isErroneous ])
       }
 
       return (.integerLiteral, [])
@@ -1381,11 +1372,11 @@ extension Lexer.Cursor {
       // Floating literals must have '.', 'e', or 'E' after digits.  If it is
       // something else, then this is the end of the token.
       if self.isAtEndOfFile || (self.peek() != UInt8(ascii: "e") && self.peek() != UInt8(ascii: "E")) {
-        var tmp = self
-        if tmp.advance(if: { $0.isValidIdentifierContinuationCodePoint }) {
-//          return expected_int_digit(tmp, .decimal)
+        let tmp = self
+        if self.advance(if: { $0.isValidIdentifierContinuationCodePoint }) {
+          diagnosticHandler?(TokStart.distance(to: tmp), InvalidDigitInIntegerliteral(kind: .decimal(Unicode.Scalar(tmp.peek()))))
           self.advance(while: { $0.isValidIdentifierContinuationCodePoint })
-          return (.unknown, [])
+          return (.integerLiteral, [ .isErroneous ])
         }
 
         return (.integerLiteral, [])
@@ -1406,26 +1397,32 @@ extension Lexer.Cursor {
         // There are 3 cases to diagnose if the exponent starts with a non-digit:
         // identifier (invalid character), underscore (invalid first character),
         // non-identifier (empty exponent)
-//        let tmp = self
-//        if (advanceIfValidContinuationOfIdentifier(CurPtr, BufferEnd))
-//          diagnose(tmp, diag::lex_invalid_digit_in_fp_exponent, StringRef(tmp, 1),
-//                   *tmp == '_')
-//        else
-//          diagnose(CurPtr, diag::lex_expected_digit_in_fp_exponent)
+        let tmp = self
+        if self.advance(if: { $0.isValidIdentifierContinuationCodePoint }) {
+          let diagKind: InvalidFloatingPointExponentDigit.Kind
+          if tmp.peek() == UInt8(ascii: "_") {
+            diagKind = .character(Unicode.Scalar(tmp.peek()))
+          } else {
+            diagKind = .digit(Unicode.Scalar(tmp.peek()))
+          }
+          diagnosticHandler?(TokStart.distance(to: tmp), InvalidFloatingPointExponentDigit(kind: diagKind))
+        } else {
+          diagnosticHandler?(TokStart.distance(to: tmp), StaticLexerError.lex_expected_digit_in_fp_exponent)
+        }
 
         self.advance(while: { $0.isValidIdentifierContinuationCodePoint })
-        return (.unknown, [])
+        return (.floatingLiteral, [ .isErroneous ])
       }
 
       self.advance(while: { char in
         char.isDigit || char == Unicode.Scalar("_")
       })
 
+      let tmp = self
       if self.advance(if: { $0.isValidIdentifierContinuationCodePoint }) {
-//        diagnose(tmp, diag::lex_invalid_digit_in_fp_exponent, StringRef(tmp, 1),
-//                 false)
+        diagnosticHandler?(TokStart.distance(to: tmp), InvalidFloatingPointExponentDigit(kind: .digit(Unicode.Scalar(tmp.peek()))))
         self.advance(while: { $0.isValidIdentifierContinuationCodePoint })
-        return (.unknown, [])
+        return (.floatingLiteral, [ .isErroneous ])
       }
     }
 
@@ -1457,7 +1454,7 @@ extension Lexer.Cursor {
     if self.peek() != UInt8(ascii: ".") && self.peek() != UInt8(ascii: "p") && self.peek() != UInt8(ascii: "P") {
       let tmp = self
       if self.advance(if: { $0.isValidIdentifierContinuationCodePoint }) {
-        diagnosticHandler?(TokStart.distance(to: tmp), InvalidDigitInIntegerliteral(kind: .hex(Unicode.Scalar(self.peek()))))
+        diagnosticHandler?(TokStart.distance(to: tmp), InvalidDigitInIntegerliteral(kind: .hex(Unicode.Scalar(tmp.peek()))))
         self.advance(while: { $0.isValidIdentifierContinuationCodePoint })
         return (.integerLiteral, [ .isErroneous ])
       } else {
