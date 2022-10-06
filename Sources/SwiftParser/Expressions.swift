@@ -1258,7 +1258,8 @@ extension Parser {
     let openQuote = self.parseStringLiteralQuote(
       at: openDelimiter != nil ? .leadingRaw : .leading,
       text: text,
-      wantsMultiline: self.currentToken.isMultilineStringLiteral
+      wantsMultiline: self.currentToken.isMultilineStringLiteral,
+      hasError: self.currentToken.flags.contains(.isErroneous)
     ) ?? RawTokenSyntax(missing: .stringQuote, arena: arena)
     if !openQuote.isMissing {
       text = text.dropFirst(openQuote.tokenText.count)
@@ -1266,14 +1267,16 @@ extension Parser {
 
     /// Parse segments.
     let (segments, closeStart) = self.parseStringLiteralSegments(
-      text, openQuote, openDelimiter?.tokenText ?? "")
+      text, openQuote, openDelimiter?.tokenText ?? "",
+      self.currentToken.flags.contains(.isErroneous))
     text = text[closeStart...]
 
     /// Parse close quote.
     let closeQuote = self.parseStringLiteralQuote(
       at: openDelimiter != nil ? .trailingRaw : .trailing,
       text: text,
-      wantsMultiline: self.currentToken.isMultilineStringLiteral
+      wantsMultiline: self.currentToken.isMultilineStringLiteral,
+      hasError: self.currentToken.flags.contains(.isErroneous)
     ) ?? RawTokenSyntax(missing: openQuote.tokenKind, arena: arena)
     if !closeQuote.isMissing {
       text = text.dropFirst(closeQuote.tokenText.count)
@@ -1362,7 +1365,8 @@ extension Parser {
   private func makeStringLiteralQuoteToken(
     _ kind: RawTokenKind,
     text: Slice<SyntaxText>,
-    at position: QuotePosition
+    at position: QuotePosition,
+    hasError: Bool
   ) -> RawTokenSyntax {
     let wholeText: SyntaxText
     let textRange: Range<SyntaxText.Index>
@@ -1382,7 +1386,7 @@ extension Parser {
       wholeText: wholeText,
       textRange: textRange,
       presence: .present,
-      hasError: false,
+      hasError: hasError,
       arena: self.arena
     )
   }
@@ -1400,19 +1404,20 @@ extension Parser {
       return nil
     }
     return makeStringLiteralQuoteToken(
-      .rawStringDelimiter, text: text[..<index], at: position)
+      .rawStringDelimiter, text: text[..<index], at: position, hasError: false)
   }
 
   mutating func parseStringLiteralQuote(
     at position: QuotePosition,
     text: Slice<SyntaxText>,
-    wantsMultiline: Bool
+    wantsMultiline: Bool,
+    hasError: Bool
   ) -> RawTokenSyntax? {
     // Single quote. We only support single line literal.
     if let first = text.first, first == UInt8(ascii: "'") {
       let index = text.index(after: text.startIndex)
       return makeStringLiteralQuoteToken(
-        .singleQuote, text: text[..<index], at: position)
+        .singleQuote, text: text[..<index], at: position, hasError: hasError)
     }
 
     var index = text.startIndex
@@ -1457,12 +1462,12 @@ extension Parser {
     // Single line string literal.
     if quoteCount == 1 {
       return makeStringLiteralQuoteToken(
-        .stringQuote, text: text[..<index], at: position)
+        .stringQuote, text: text[..<index], at: position, hasError: hasError)
     }
     // Multi line string literal.
     if quoteCount == 3 {
       return makeStringLiteralQuoteToken(
-        .multilineStringQuote, text: text[..<index], at: position)
+        .multilineStringQuote, text: text[..<index], at: position, hasError: hasError)
     }
     // Otherwise, this is not a literal quote.
     return nil
@@ -1477,7 +1482,8 @@ extension Parser {
   mutating func parseStringLiteralSegments(
     _ text: Slice<SyntaxText>,
     _ closer: RawTokenSyntax,
-    _ delimiter: SyntaxText
+    _ delimiter: SyntaxText,
+    _ hasError: Bool
   ) -> (RawStringLiteralSegmentsSyntax, SyntaxText.Index) {
     let allowsMultiline = closer.tokenKind == .multilineStringQuote
 
@@ -1596,8 +1602,10 @@ extension Parser {
            segments.last!.is(RawExpressionSegmentSyntax.self))
     let segmentToken = RawTokenSyntax(
       kind: .stringSegment,
-      text: SyntaxText(rebasing: segment),
+      wholeText: SyntaxText(rebasing: segment),
+      textRange: 0..<segment.count,
       presence: .present,
+      hasError: hasError,
       arena: self.arena)
     segments.append(RawSyntax(RawStringSegmentSyntax(content: segmentToken,
                                                      arena: self.arena)))

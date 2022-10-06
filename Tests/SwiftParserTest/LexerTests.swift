@@ -732,6 +732,18 @@ public class LexerTests: XCTestCase {
       DiagnosticSpec(locationMarker: "BAD_HEX_DIGIT_G", message: "'G' is not a valid hexadecimal digit (0-9, A-F) in integer literal"),
     ])
   }
+
+  func testStringLiteralDiagnostics() {
+    AssertParse(
+      #"""
+      var s = "\uPPPP"
+      """#,
+    diagnostics: [
+
+    ])
+  }
+
+
 }
 
 extension Lexer {

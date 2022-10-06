@@ -93,7 +93,7 @@ public struct TriviaParser {
 
       case UInt8(ascii: "<"), UInt8(ascii: ">"):
         // SCM conflict markers.
-        if cursor.tryLexConflictMarker(start: start) {
+        if cursor.tryLexConflictMarker(start: start, nil) {
           pieces.append(.unexpectedText(start.textUpTo(cursor)))
           continue
         }

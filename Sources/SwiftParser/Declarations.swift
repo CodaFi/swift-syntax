@@ -1546,7 +1546,7 @@ extension Parser {
       var cursor = Lexer.Cursor(input: buffer, previous: 0)
       guard buffer[0] == UInt8(ascii: "/") else { return false }
 
-      switch (cursor.lexOperatorIdentifier(cursor, cursor)) {
+      switch (cursor.lexOperatorIdentifier(cursor, cursor, nil)) {
       case (.unknown, _):
         return false
 

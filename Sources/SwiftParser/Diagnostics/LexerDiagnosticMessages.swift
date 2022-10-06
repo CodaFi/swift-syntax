@@ -68,6 +68,23 @@ public extension LexerFixIt {
 public enum StaticLexerError: String, DiagnosticMessage {
   case lex_expected_binary_exponent_in_hex_float_literal = "hexadecimal floating point literal must end with an exponent"
   case lex_expected_digit_in_fp_exponent = "expected a digit in floating point exponent"
+  case lex_unexpected_block_comment_end = "unexpected end of block comment"
+  case lex_unterminated_string_literal = "unterminated string literal"
+  case lex_unicode_escape_braces = "expected hexadecimal code in braces after unicode escape"
+  case lex_invalid_escape = "invalid escape sequence in literal"
+  case lex_invalid_utf8 = "invalid UTF-8 found in source file"
+  case lex_invalid_u_escape = "\\u{...} escape sequence expects between 1 and 8 hex digits"
+  case lex_invalid_u_escape_rbrace = "expected '}' in \\u{...} escape sequence"
+  case lex_invalid_curly_quote = "unicode curly quote found, replace with '\"'"
+  case expected_member_name = "expected member name following '.'"
+  case extra_whitespace_period = "extraneous whitespace after '.' is not permitted"
+  case lex_conflict_marker_in_file = "source control conflict marker in source file"
+  case lex_unprintable_ascii_character = "unprintable ASCII character found in source file"
+  case lex_nul_character = "nul character embedded in middle of file"
+  case lex_invalid_identifier_start_character = "an identifier cannot begin with this character"
+  case lex_nonbreaking_space = "non-breaking space (U+00A0) used instead of regular space"
+  case lex_invalid_character = "invalid character in source file"
+  case lex_illegal_multiline_string_start = "multi-line string literal content must begin on a new line"
 
   public var message: String { self.rawValue }
 
