@@ -165,6 +165,7 @@ public struct Parser: TokenConsumer {
       wholeText: tok.wholeText,
       textRange: tok.textRange,
       presence: .present,
+      hasError: tok.flags.contains(.isErroneous),
       arena: arena
     )
   }
@@ -508,6 +509,7 @@ extension Parser {
       wholeText: SyntaxText(rebasing: current.wholeText[..<endIndex]),
       textRange: current.textRange.lowerBound ..< endIndex,
       presence: .present,
+      hasError: current.flags.contains(.isErroneous),
       arena: self.arena
     )
 

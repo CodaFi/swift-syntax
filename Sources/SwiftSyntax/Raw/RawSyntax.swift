@@ -53,6 +53,8 @@ internal struct RawSyntaxData {
     var textRange: Range<SyntaxText.Index>
 
     var presence: SourcePresence
+
+    var hasError: Bool
   }
 
   /// Token typically created with `TokenSyntax.<someToken>`.
@@ -166,7 +168,7 @@ extension RawSyntax {
     switch view {
     case .token(let tokenView):
       var recursiveFlags: RecursiveRawSyntaxFlags = []
-      if tokenView.presence == .missing {
+      if tokenView.hasError || tokenView.presence == .missing {
         recursiveFlags.insert(.hasError)
       }
       return recursiveFlags
@@ -448,7 +450,8 @@ extension RawSyntax {
     wholeText: SyntaxText,
     textRange: Range<SyntaxText.Index>,
     presence: SourcePresence,
-    arena: SyntaxArena
+    arena: SyntaxArena,
+    hasError: Bool
   ) -> RawSyntax {
     assert(arena.contains(text: wholeText),
            "token text must be managed by the arena")
@@ -456,7 +459,8 @@ extension RawSyntax {
       tokenKind: kind,
       wholeText: wholeText,
       textRange: textRange,
-      presence: presence
+      presence: presence,
+      hasError: hasError
     )
     return RawSyntax(arena: arena, payload: .parsedToken(payload))
   }

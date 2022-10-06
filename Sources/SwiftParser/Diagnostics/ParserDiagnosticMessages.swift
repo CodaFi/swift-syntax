@@ -1,4 +1,4 @@
-//===--- ParserDiagnosticKinds.swift --------------------------------------===//
+//===--- ParserDiagnosticMessages.swift -----------------------------------===//
 //
 // This source file is part of the Swift.org open source project
 //
@@ -13,7 +13,7 @@
 import SwiftDiagnostics
 @_spi(RawSyntax) import SwiftSyntax
 
-let diagnosticDomain: String = "SwiftParser"
+fileprivate let diagnosticDomain: String = "SwiftParser"
 
 /// A error diagnostic whose ID is determined by the diagnostic's type.
 public protocol ParserError: DiagnosticMessage {

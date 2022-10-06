@@ -96,6 +96,7 @@ final class RawSyntaxTests: XCTestCase {
       let ident = RawTokenSyntax(
         kind: .identifier, wholeText: arena.intern("\nfoo "), textRange: 1..<4,
         presence: .present,
+        hasError: false,
         arena: arena)
 
       XCTAssertEqual(ident.tokenKind, .identifier)
